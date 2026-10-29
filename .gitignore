@@ -1,0 +1,11 @@
+.env*
+node_modules/
+.next/
+.DS_Store
+/data/
+*.sqlite3
+/playwright-report/
+/test-results/
+/blob-report/
+.advisor/
+!.env.example
