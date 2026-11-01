@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${boldonse.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable}`}>
       <body>
         <Header />
-        <main className="wrap" style={{ paddingTop: 24, paddingBottom: 48 }}>
+        <main className="wrap page">
           {children}
         </main>
         <Footer />

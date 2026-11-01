@@ -47,7 +47,7 @@ export default function ComparePicker({ index, initial }) {
 
   const stmt = (list, value, set, id) =>
     list.length > 1 ? (
-      <select id={id} className="input" value={value} onChange={(e) => set(Number(e.target.value))} style={{ marginTop: 8 }} aria-label="Statement">
+      <select id={id} className="input" value={value} onChange={(e) => set(Number(e.target.value))} style={{ marginTop: "var(--s1)" }} aria-label="Statement">
         {list.map((s, i) => (
           <option key={s.id} value={i}>stated {s.statedAt}</option>
         ))}
@@ -92,8 +92,8 @@ export default function ComparePicker({ index, initial }) {
           {stmt(listB, bi, setBi, "cmp-bi")}
         </div>
       </div>
-      <div style={{ marginTop: 16 }}>
-        <button type="submit" className="btn">Compare</button>
+      <div style={{ marginTop: "var(--s2)" }}>
+        <button type="submit" className="btn btn-cta">Compare</button>
       </div>
     </form>
   );

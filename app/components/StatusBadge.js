@@ -1,6 +1,6 @@
 export function StatusBadge({ status, direction }) {
-  const worse = status === "missed" && direction === "worse";
-  return <span className={`status${worse ? " status-worse" : ""}`}>{status}</span>;
+  const tone = status === "met" ? " status-met" : status === "missed" ? (direction === "worse" ? " status-worse" : direction === "better" ? " status-better" : "") : "";
+  return <span className={`status${tone}`}>{status}</span>;
 }
 
 export function DirectionText({ direction }) {

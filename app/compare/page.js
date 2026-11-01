@@ -1,8 +1,10 @@
-import { getRow, getAllRows, compareIndex } from "../lib/data";
-import { formatGuided, formatValue } from "../lib/format";
+import { getAllRows, compareIndex, getCompanyRows } from "../lib/data";
+import { formatGuided, formatValue, describeRow } from "../lib/format";
+import { chartGroups } from "../lib/chart";
 import { StatusBadge } from "../components/StatusBadge";
 import Excerpt from "../components/Excerpt";
 import ComparePicker from "../components/ComparePicker";
+import Chart, { ChartKey } from "../components/Chart";
 import Link from "next/link";
 
 export const metadata = { title: "Compare" };
@@ -16,17 +18,18 @@ function pick(t, m, period, i) {
   return { row: list[i] || list[0] || null, count: list.length };
 }
 
-function Side({ row, count }) {
-  if (!row) return <div className="card">No row for this period.</div>;
+function Side({ row, count, letter }) {
+  if (!row) return <div className="card">There is no statement for this period.</div>;
   return (
-    <div className="card stack" style={{ minWidth: 0 }} data-compare-side>
+    <div className="card stack-tight" data-compare-side>
       <div>
-        <h2>{row.period}</h2>
-        <p style={{ margin: "4px 0 0" }}>
+        <h2><span className="mono faint">{letter}</span> {row.period}</h2>
+        <p className="small" style={{ margin: "var(--s1) 0 0" }}>
           <StatusBadge status={row.status} direction={row.direction} />
           {row.direction ? <span> {row.direction} than guided</span> : null}
         </p>
       </div>
+      <p style={{ margin: 0, color: "var(--ink)" }}>{describeRow(row)}</p>
       <dl className="facts">
         <dt>Guided</dt>
         <dd>{formatGuided(row.low, row.high, row.unit)}</dd>
@@ -40,16 +43,16 @@ function Side({ row, count }) {
         <dd><Link href={`/row/${row.id}`} className="mono">{row.id}</Link></dd>
       </dl>
       {count > 1 ? (
-        <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--faint)" }}>
-          {count} statements exist for this period. This is the one stated {row.statedAt}.
+        <p className="small faint" style={{ margin: 0 }}>
+          {count} statements exist for this period. This is the one stated <span className="mono">{row.statedAt}</span>.
         </p>
       ) : null}
       <div>
-        <h3 style={{ fontSize: "1rem", marginBottom: 8 }}>Guidance</h3>
+        <h3 style={{ marginBottom: "var(--s1)" }}>Guidance</h3>
         <Excerpt evidence={row.guidance} />
       </div>
       <div>
-        <h3 style={{ fontSize: "1rem", marginBottom: 8 }}>Outcome</h3>
+        <h3 style={{ marginBottom: "var(--s1)" }}>Outcome</h3>
         {row.outcome ? <Excerpt evidence={row.outcome} /> : <p style={{ margin: 0 }}>No filing has reported this figure yet.</p>}
       </div>
     </div>
@@ -69,24 +72,51 @@ export default async function ComparePage({ searchParams }) {
   const left = ready ? pick(t, m, a, ai) : null;
   const right = ready ? pick(t, m, b, bi) : null;
 
+  // The chart for this metric, with the two chosen statements marked A and B.
+  const marks = {};
+  if (left?.row) marks[left.row.id] = "A";
+  if (right?.row) marks[right.row.id] = "B";
+  const groups = ready
+    ? chartGroups(getCompanyRows(t).filter((r) => r.metric === m)).filter((g) => g.points.some((p) => marks[p.id]))
+    : [];
+
   return (
     <div className="stack">
       <section>
         <h1>Compare two periods</h1>
-        <p style={{ marginTop: 12, maxWidth: 680 }}>
-          Pick a company, a metric and two periods. You get both guidance rows side by side, with the
-          sentences and the outcomes.
+        <p className="lede">
+          Pick a company, a metric and two periods. You get the metric over time with both statements marked,
+          then the two rows side by side.
         </p>
       </section>
       <section className="card">
         <ComparePicker index={index} initial={{ t, m, a, b, ai, bi }} />
       </section>
       {ready ? (
-        <section className="pair" aria-label="Comparison">
-          <Side {...left} />
-          <Side {...right} />
-        </section>
-      ) : null}
+        <>
+          {groups.length > 0 ? (
+            <section aria-label="Metric over time" className="stack-tight">
+              <ChartKey />
+              <div className="charts">
+                {groups.map((g) => <Chart key={g.key} group={g} highlight={marks} />)}
+              </div>
+            </section>
+          ) : null}
+          <section className="pair" aria-label="Comparison">
+            <Side {...left} letter="A" />
+            <Side {...right} letter="B" />
+          </section>
+        </>
+      ) : (
+        <div className="card empty">
+          <h2>Nothing to compare yet</h2>
+          <p style={{ margin: 0 }}>
+            {t || m || a || b
+              ? "That combination has no statements. Pick a period from the lists above and press Compare."
+              : "Choose a company, a metric and two periods above, then press Compare."}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -63,7 +63,7 @@ export default function RequestForm() {
           </select>
         </div>
       </div>
-      <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+      <div style={{ marginTop: "var(--s2)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--s2)" }}>
         <button type="submit" className="btn btn-cta" disabled={state.phase === "sending"}>
           Request a company
         </button>

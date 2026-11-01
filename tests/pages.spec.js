@@ -57,17 +57,23 @@ test.describe("company page", () => {
     await expect(page.locator("tr[data-row]")).toHaveCount(212);
   });
 
+  test("metric filter lists each metric once, without a basis", async ({ page }) => {
+    await page.goto("/company/NVDA");
+    const opts = await page.getByRole("group", { name: "Metric" }).getByRole("link").allTextContents();
+    expect(opts.filter((o) => /gaap/i.test(o))).toEqual([]);
+    expect(new Set(opts).size).toBe(opts.length);
+    expect(opts.filter((o) => o === "gross margin")).toHaveLength(1);
+  });
+
   test("a filter changes the count", async ({ page }) => {
     await page.goto("/company/NVDA");
     const before = await page.locator("tr[data-row]").count();
-    await page.getByLabel("Metric").selectOption("revenue");
-    await page.getByRole("button", { name: "Apply filters" }).click();
+    await page.getByRole("group", { name: "Metric" }).getByRole("link", { name: "revenue", exact: true }).click();
     await expect(page).toHaveURL(/metric=revenue/);
     const expected = records.filter((r) => r.ticker === "NVDA" && r.assumption.metric === "revenue").length;
     await expect(page.locator("tr[data-row]")).toHaveCount(expected);
     expect(expected).toBeLessThan(before);
-    await page.getByLabel("Fiscal year").selectOption("2024");
-    await page.getByRole("button", { name: "Apply filters" }).click();
+    await page.getByRole("group", { name: "Fiscal year" }).getByRole("link", { name: "FY2024", exact: true }).click();
     const both = records.filter(
       (r) => r.ticker === "NVDA" && r.assumption.metric === "revenue" && /FY2024$/.test(r.assumption.target_period)
     ).length;
@@ -91,6 +97,7 @@ test.describe("row page", () => {
     }
     await expect(page.getByTestId("review-label")).toHaveText("review: hand-reviewed");
     await expect(page.getByText(resolved.record_id)).toBeVisible();
+    await expect(page.getByText("Reviewed by hand by Navneet on 2026-")).toBeVisible();
   });
 
   test("an acknowledged row shows a third link", async ({ page }) => {

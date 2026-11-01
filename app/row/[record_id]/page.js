@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getRow } from "../../lib/data";
-import { formatGuided, formatValue } from "../../lib/format";
+import { getRow, getNeighbours } from "../../lib/data";
+import { formatGuided, formatValue, describeRow } from "../../lib/format";
 import { StatusBadge } from "../../components/StatusBadge";
 import Excerpt from "../../components/Excerpt";
 
@@ -17,16 +17,18 @@ export default async function RowPage({ params }) {
   if (!r) notFound();
 
   const handReviewed = Boolean(r.reviewer && r.reviewedAt);
+  const { prev, next, position, total } = getNeighbours(r);
 
   return (
     <div className="stack">
       <section>
-        <p style={{ margin: "0 0 8px" }}>
+        <p className="small" style={{ margin: "0 0 var(--s1)" }}>
           <Link href={`/company/${r.ticker}`}>{r.company}</Link>
         </p>
         <h1>{r.metric}, {r.period}</h1>
-        <p style={{ marginTop: 12 }}>{r.claim}</p>
-        <p className="mono" style={{ color: "var(--faint)", margin: "8px 0 0" }}>{r.id}</p>
+        <p className="lede">{r.claim}</p>
+        <p className="callout" data-testid="what-this-means">{describeRow(r)}</p>
+        <p className="mono small faint" style={{ margin: "var(--s2) 0 0" }}>{r.id}</p>
       </section>
 
       <section className="card">
@@ -52,25 +54,25 @@ export default async function RowPage({ params }) {
       </section>
 
       <section className="card" aria-labelledby="guidance">
-        <h2 id="guidance" style={{ marginBottom: 12 }}>The guidance</h2>
+        <h2 id="guidance" style={{ marginBottom: "var(--s2)" }}>The guidance</h2>
         <Excerpt evidence={r.guidance} />
       </section>
 
       <section className="card" aria-labelledby="outcome">
-        <h2 id="outcome" style={{ marginBottom: 12 }}>The outcome</h2>
+        <h2 id="outcome" style={{ marginBottom: "var(--s2)" }}>The outcome</h2>
         {r.outcome ? <Excerpt evidence={r.outcome} /> : <p style={{ margin: 0 }}>No filing has reported this figure yet.</p>}
       </section>
 
       {r.acknowledgement ? (
         <section className="card" aria-labelledby="ack">
-          <h2 id="ack" style={{ marginBottom: 12 }}>The acknowledgement</h2>
+          <h2 id="ack" style={{ marginBottom: "var(--s2)" }}>The acknowledgement</h2>
           <Excerpt evidence={r.acknowledgement} />
         </section>
       ) : null}
 
       <section className="card" aria-labelledby="review">
-        <h2 id="review" style={{ marginBottom: 12 }}>Review</h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+        <h2 id="review" style={{ marginBottom: "var(--s2)" }}>Review</h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--s1)", alignItems: "center" }}>
           <span className="status" data-testid="review-label">
             {handReviewed ? "review: hand-reviewed" : "review: not reviewed"}
           </span>
@@ -78,12 +80,34 @@ export default async function RowPage({ params }) {
           <span data-slot="review-machine" />
           <span data-slot="flag" />
         </div>
-        <p style={{ margin: "12px 0 0", fontSize: "0.875rem" }}>
-          {r.reviewer ? <>Reviewed by {r.reviewer}</> : null}
+        <p className="small" style={{ margin: "var(--s2) 0 0" }}>
+          {r.reviewer ? <>Reviewed by hand by {r.reviewer.charAt(0).toUpperCase() + r.reviewer.slice(1)}</> : null}
           {r.reviewedAt ? <> on <span className="mono">{r.reviewedAt}</span></> : null}.
         </p>
-        {r.reviewerNote ? <p style={{ margin: "8px 0 0" }}>Reviewer note: {r.reviewerNote}</p> : null}
+        {r.reviewerNote ? <p style={{ margin: "var(--s1) 0 0" }}>Reviewer note: {r.reviewerNote}</p> : null}
       </section>
+
+      <nav aria-label="Other statements" className="row-nav">
+        {prev ? (
+          <Link href={`/row/${prev.id}`} data-nav="prev">
+            <span className="small faint">Previous {r.metric} statement</span>
+            <br />
+            {prev.period}, stated <span className="mono">{prev.statedAt}</span>
+          </Link>
+        ) : (
+          <span className="none small">This is the first {r.metric} statement for {r.company}.</span>
+        )}
+        {next ? (
+          <Link href={`/row/${next.id}`} data-nav="next" className="next">
+            <span className="small faint">Next {r.metric} statement</span>
+            <br />
+            {next.period}, stated <span className="mono">{next.statedAt}</span>
+          </Link>
+        ) : (
+          <span className="none small" style={{ textAlign: "right" }}>This is the latest {r.metric} statement for {r.company}.</span>
+        )}
+        <p className="small faint" style={{ margin: 0, gridColumn: "1 / -1" }}>Statement {position} of {total} for {r.company} on {r.metric}.</p>
+      </nav>
     </div>
   );
 }

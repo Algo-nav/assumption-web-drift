@@ -1,6 +1,7 @@
 // In-memory dataset. Loaded once per server process; every page reads through these functions.
 import { loadRawRecords } from "./source.js";
 import { higherIsBetter, directionOf } from "./polarity.js";
+import { SECTORS } from "./sectors.js";
 
 const KEY = Symbol.for("assumption-drift.store");
 
@@ -9,10 +10,13 @@ function fiscalYear(period) {
   return m ? m[1] : null;
 }
 
-// "EPS non-GAAP" -> metric "EPS", basis "non-GAAP". Metrics with no basis in the name get "n/a".
-function splitMetric(metric) {
-  const m = /^(.*?)\s+(non-GAAP|GAAP)$/.exec(metric);
-  return m ? { base: m[1], basis: m[2] } : { base: metric, basis: "n/a" };
+// The basis is a suffix ("EPS non-GAAP") or a prefix ("GAAP gross margin"): both split to metric + basis.
+// Metrics with no basis in the name get "n/a".
+export function splitMetric(metric) {
+  const m = /^(.*?)\s+(non-GAAP|GAAP)$/i.exec(metric) || /^(non-GAAP|GAAP)\s+(.*)$/i.exec(metric);
+  if (!m) return { base: metric, basis: "n/a" };
+  const suffix = /^(non-GAAP|GAAP)$/i.test(m[2]);
+  return { base: suffix ? m[1] : m[2], basis: suffix ? m[2] : m[1] };
 }
 
 function evidence(e) {
@@ -101,8 +105,33 @@ export function getCompanyRows(ticker) {
 export function getCompanies() {
   const { byTicker } = store();
   return [...byTicker.entries()]
-    .map(([ticker, list]) => ({ ticker, name: list[0].company, rows: list.length }))
+    .map(([ticker, list]) => ({
+      ticker,
+      name: list[0].company,
+      shortName: shortName(list[0].company),
+      sector: SECTORS[ticker] || null,
+      ...summarise(list),
+    }))
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// "Meta Platforms, Inc." -> "Meta Platforms", "The Home Depot, Inc." -> "Home Depot".
+export function shortName(name) {
+  return name
+    .replace(/^The\s+/, "")
+    .replace(/,?\s+(Inc\.?|Incorporated|Corporation|Corp\.?|Companies|Company|Co\.?|Ltd\.?|Group)$/i, "")
+    .replace(/,?\s+(Inc\.?|Incorporated|Corporation|Corp\.?|Companies|Company|Co\.?|Ltd\.?)$/i, "");
+}
+
+export function getSector(ticker) {
+  return SECTORS[String(ticker).toUpperCase()] || null;
+}
+
+// Previous and next statement for the same company and metric, in the order they were stated.
+export function getNeighbours(row) {
+  const list = getCompanyRows(row.ticker).filter((r) => r.metric === row.metric);
+  const i = list.findIndex((r) => r.id === row.id);
+  return { prev: list[i - 1] || null, next: list[i + 1] || null, position: i + 1, total: list.length };
 }
 
 export function summarise(rows) {

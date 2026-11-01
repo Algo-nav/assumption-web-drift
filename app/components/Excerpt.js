@@ -6,7 +6,7 @@ export default function Excerpt({ evidence, linkLabel }) {
   return (
     <div>
       <blockquote className="excerpt" data-excerpt>{evidence.excerpt}</blockquote>
-      <p style={{ margin: "8px 0 0", fontSize: "0.875rem" }}>
+      <p className="small" style={{ margin: "var(--s1) 0 0" }}>
         <span className="mono">{evidence.filingType} {evidence.accession}</span>, filed <span className="mono">{evidence.filedAt}</span>
         {" "}
         <EdgarLink evidence={evidence} label={linkLabel} />

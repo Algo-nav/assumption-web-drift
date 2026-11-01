@@ -1,3 +1,4 @@
+import { side } from "./data/polarity.js";
 // Prints guided and reported figures with their units, from the dataset's own unit strings.
 
 function num(n) {
@@ -56,4 +57,38 @@ export function formatGuided(low, high, unit) {
   if (low == null && high != null) return `at most ${one(high, unit)}`;
   if (low === high) return one(low, unit);
   return `${bare(low, unit)} to ${bare(high, unit)}${TAIL[unit] || ""}`;
+}
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// "2019-01-28" -> "28 Jan 2019". Parsed by hand so the time zone never shifts the day.
+export function formatDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || "");
+  return m ? `${Number(m[3])} ${MONTHS[Number(m[2]) - 1]} ${m[1]}` : iso || "";
+}
+
+export function daysBetween(a, b) {
+  const t = (d) => Date.parse(`${String(d).slice(0, 10)}T00:00:00Z`);
+  const n = Math.round((t(b) - t(a)) / 86400000);
+  return Number.isFinite(n) ? n : null;
+}
+
+// One plain sentence built from the row's own fields.
+export function describeRow(r) {
+  const guided = `Guided ${formatGuided(r.low, r.high, r.unit)} on ${formatDate(r.statedAt)}`;
+  if (r.reported == null) {
+    return r.status === "withdrawn" ? `${guided}; withdrawn.` : `${guided}; no filing has reported it yet.`;
+  }
+  const gap = daysBetween(r.statedAt, r.reportedAt);
+  const when = gap == null ? "" : gap === 0 ? " the same day" : ` ${gap} day${gap === 1 ? "" : "s"} later`;
+  const sd = side(r.low, r.high, r.reported);
+  let where;
+  if (r.status === "met" || !sd) {
+    where = r.status === "met" ? (r.low === r.high ? "on the guided figure" : "inside the range") : "outside the range";
+  } else {
+    const bound = sd === "above" ? (r.high ?? r.low) : (r.low ?? r.high);
+    const pct = bound ? (Math.abs(r.reported - bound) / Math.abs(bound)) * 100 : null;
+    where = `${sd} the range${pct == null ? "" : ` by ${pct.toFixed(1)}%`}${r.direction ? `, ${r.direction} than guided` : ""}`;
+  }
+  return `${guided}; reported ${formatValue(r.reported, r.unit)}${when}; ${where}.`;
 }
