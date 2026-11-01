@@ -163,6 +163,7 @@ export default async function CompanyPage({ params, searchParams }) {
                   <span className="year-name">{year === "none" ? "Other" : `FY${year}`}</span>
                   <span className="small faint">{list.length} row{list.length === 1 ? "" : "s"}</span>
                 </summary>
+                <p className="scroll-hint small faint">Scroll sideways for more columns</p>
                 <div className="table-scroll">
                   <table className="data">
                     <colgroup>

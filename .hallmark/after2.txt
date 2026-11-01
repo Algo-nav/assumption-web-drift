@@ -1,0 +1,62 @@
+render tier: 35 screenshots in /Users/macintoshhd/Desktop/Renaissance/assumption-web-drift/.hallmark/shots (1280x800, 1440x900, 1920x1080 folds; 1440 and 375 full pages)
+http://localhost:3000/
+  FAIL 44d :1 [1920px] hero runs past the 1920x1080 screen (hero ends at 1389px) | fix: Cap vw-sized visuals and display sizes
+  REFLEX 49b :1 [414px] link "View on EDGAR" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+  REFLEX 72 :1 [1440px] text crowds the edge of its box: details.panel bottom -580px | fix: Pad the box: max(8px, 0.5em) at the sides, max(4px, 0.3em) above and below
+  NOTE 44c :1 [1440px] hero runs past the 1440x900 fold (hero ends at 1389px) | fix: Size the display and the visual so the hero is one screen
+  NOTE 58 :1 [1440px] 268 words on one screen (from y=1150) | fix: One idea per screen: cut to about 80 words, make the section an object
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73) | fix: 120px or more between sections, by the --section-gap steps
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included | fix: A landing strip, not a page: six to nine sections, five on a thin prompt (layout.md § 3)
+http://localhost:3000/row/01DV4GWZ002WYJ1A8V8XEKTWR1
+  FAIL 49a :1 [320px] control "Previous EPS GAAP statementFY202" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+  FAIL 49a :1 [320px] control "Next EPS GAAP statementFY2020, s" wraps to 2 lines (a.next)
+  WARN F18 :1 [375px] slot "review-machine" renders at 0 x 0px on a phone | fix: The slot collapsed: give it width: 100% and an aspect-ratio in the stacked layout
+  WARN F18 :1 [1440px] slot "review-machine" renders at 0 x 0px | fix: The slot collapsed: give it a width from its track and a real aspect-ratio, never a percentage of a shrink-to-fit parent
+  NOTE 44c :1 [1440px] hero ends at 380px of a 900px screen | fix: Fill the first screen with the visual or the headline, not with copy
+  NOTE 58 :1 [1440px] 81 words on one screen (from y=150) | fix: Close to the 80-word screen budget
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 520px of nothing between the hero's last content (y 380) and the fold | fix: Centre the content in the screen and grow the visual or the head (layout.md § 6); never fill it with copy
+http://localhost:3000/methodology
+  REFLEX 25 :1 [1440px] running prose set too wide: p about 90 characters a line, p about 91 characters a line | fix: Cap the measure at 45 to 75ch
+  REFLEX 49b :1 [320px] link "github.com/Algo-nav/assumption-d" wraps to 2 lines (a)
+  WARN F19 :1 [1440px] 4 font weights in running use (400, 500, 600, 700) | fix: Three weights at most, display and body together, picked as extremes
+  NOTE 44c :1 [1440px] hero ends at 73px of a 900px screen
+  NOTE 58 :1 [1440px] 427 words on one screen (from y=3400)
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 78 :1 [1440px] section heads render at 20px under a 36px hero head | fix: h2 at --text-section (about 52px at 1440), item titles at --text-title (layout.md § 2)
+http://localhost:3000/company/NVDA
+  REFLEX 72 :1 [1440px] text crowds the edge of its box: details.year right -9px; details.year right -9px; details.year right -9px, bo…
+  WARN F25 :1 [375px] a table opens with 54 columns off-screen (from "Stated") | fix: Keep the column that names the row and the one that acts on it in view: restack each row, or pin the first column
+  NOTE 44c :1 [1440px] hero ends at 311px of a 900px screen
+  NOTE 58 :1 [1440px] 1287 words on one screen (from y=3950)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 589px of nothing between the hero's last content (y 311) and the fold
+http://localhost:3000/misses
+  WARN F25 :1 [375px] a table opens with 5 columns off-screen (from "Reported")
+  NOTE 44c :1 [1440px] hero ends at 228px of a 900px screen
+  NOTE 58 :1 [1440px] 260 words on one screen (from y=2400)
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 672px of nothing between the hero's last content (y 228) and the fold
+app/globals.css
+  WAIVED 7b :164 pure #fff: background: var(--card) (.card)
+  WAIVED 7b :190 pure #fff: background: var(--card) (.input)
+  WAIVED 7b :348 pure #fff: background: var(--card) (.tile)
+  WAIVED 7b :399 pure #fff: background: var(--card) (.company-card)
+  WAIVED 7b :520 pure #fff: background: var(--card) (.stat)
+  WAIVED 7b :563 pure #fff: background: var(--card) (.pill)
+  WAIVED 7b :758 pure #fff: background: var(--card) (.row-nav a)
+  WAIVED 7b :797 pure #fff: background: var(--card) (.chart)
+http://localhost:3000/about
+  NOTE 44c :1 [1440px] hero ends at 73px of a 900px screen
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 77 :1 [1440px] 1 thin section: div.stack (100% wide, no mass) | fix: Widen the body to ten of twelve columns and give it mass: a visual 300px tall or more, a set of three across, rows, or a statement (layout.md § 4 and § 5)
+http://localhost:3000/compare
+  NOTE 44c :1 [1440px] hero ends at 204px of a 900px screen
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 540px of nothing between the hero's last content (y 204) and the next section
+sloplint: 3 FAIL, 5 REFLEX, 5 WARN, 8 WAIVED, 31 NOTE across 1 file(s) and 7 URL(s).

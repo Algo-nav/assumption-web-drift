@@ -112,6 +112,8 @@ export default async function MissesPage({ searchParams }) {
             <Link href={href({ company: "", metric: "" })} className="btn btn-sm">Clear filters</Link>
           </div>
         ) : (
+          <>
+          <p className="scroll-hint small faint">Scroll sideways for more columns</p>
           <div className="table-scroll">
             <table className="data misses">
               <colgroup>
@@ -158,6 +160,7 @@ export default async function MissesPage({ searchParams }) {
               </tbody>
             </table>
           </div>
+          </>
         )}
         {sort === "by" && !metric && rows.length > 0 ? (
           <p className="small faint" style={{ margin: "var(--s2) 0 0" }}>

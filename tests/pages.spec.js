@@ -29,14 +29,31 @@ test.describe("pages load", () => {
 });
 
 test.describe("home", () => {
-  test("headline numbers match the data file", async ({ page }) => {
+  test("the record line matches the data file", async ({ page }) => {
     await page.goto("/");
     const missed = records.filter((r) => r.status === "missed");
     const never = missed.filter((r) => !r.acknowledged_at).length;
-    await expect(page.locator('[data-stat="rows"]')).toHaveText(records.length.toLocaleString("en-US"));
-    await expect(page.locator('[data-stat="met"]')).toHaveText(String(records.filter((r) => r.status === "met").length));
-    await expect(page.locator('[data-stat="missed"]')).toHaveText(String(missed.length));
-    await expect(page.locator('[data-stat="never"]')).toHaveText(`${((never / missed.length) * 100).toFixed(1)}%`);
+    const met = records.filter((r) => r.status === "met").length;
+    const line = page.getByTestId("headline");
+    await expect(line.locator('[data-stat="rows"]')).toHaveText(records.length.toLocaleString("en-US"));
+    await expect(line.locator('[data-stat="resolved"]')).toHaveText((met + missed.length).toLocaleString("en-US"));
+    await expect(line.locator('[data-stat="met"]')).toHaveText(String(met));
+    await expect(line.locator('[data-stat="missed"]')).toHaveText(String(missed.length));
+    await expect(line.locator('[data-stat="never"]')).toHaveText(String(never));
+    await expect(line).toHaveText(
+      `${records.length.toLocaleString("en-US")} statements, ${(met + missed.length).toLocaleString("en-US")} resolved, ${met} met, ${missed.length} missed, ${never} never acknowledged`
+    );
+  });
+
+  test("the detailed grid lives on the methodology page", async ({ page }) => {
+    await page.goto("/methodology");
+    const missed = records.filter((r) => r.status === "missed");
+    const never = missed.filter((r) => !r.acknowledged_at).length;
+    const grid = page.getByTestId("record-grid");
+    await expect(grid.locator('[data-stat="rows"]')).toHaveText(records.length.toLocaleString("en-US"));
+    await expect(grid.locator('[data-stat="met"]')).toHaveText(String(records.filter((r) => r.status === "met").length));
+    await expect(grid.locator('[data-stat="missed"]')).toHaveText(String(missed.length));
+    await expect(grid.locator('[data-stat="never"]')).toHaveText(`${((never / missed.length) * 100).toFixed(1)}%`);
   });
 
   test("search narrows by name and ticker", async ({ page }) => {

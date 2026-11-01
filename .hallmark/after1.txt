@@ -1,0 +1,91 @@
+render tier: 35 screenshots in /Users/macintoshhd/Desktop/Renaissance/assumption-web-drift/.hallmark/shots (1280x800, 1440x900, 1920x1080 folds; 1440 and 375 full pages)
+http://localhost:3000/company/NVDA
+  FAIL 26a :1 [1440px] nothing shows keyboard focus on a.pt "Q4 FY2019: guided ", a.pt "Q1 FY2020: guided ", a.pt "Q2 FY2020: guided … | fix: Give every control a :focus-visible ring; never remove an outline without putting one back
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono.small "assumption-drift" | fix: Raise the contrast to threshold
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p.small.faint "NVDA · technology"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono "NVDA"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span "62 better"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p "Dataset: assumption-drif"
+  REFLEX 72 :1 [1440px] text crowds the edge of its box: details.year right -9px; details.year right -9px; details.year right -9px, bo… | fix: Pad the box: max(8px, 0.5em) at the sides, max(4px, 0.3em) above and below
+  WARN F25 :1 [375px] a table opens with 54 columns off-screen (from "Stated") | fix: Keep the column that names the row and the one that acts on it in view: restack each row, or pin the first column
+  NOTE 44c :1 [1440px] hero ends at 311px of a 900px screen | fix: Fill the first screen with the visual or the headline, not with copy
+  NOTE 58 :1 [1440px] 1287 words on one screen (from y=3950) | fix: One idea per screen: cut to about 80 words, make the section an object
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included | fix: A landing strip, not a page: six to nine sections, five on a thin prompt (layout.md § 3)
+  NOTE 79 :1 [1440px] 589px of nothing between the hero's last content (y 311) and the fold | fix: Centre the content in the screen and grow the visual or the head (layout.md § 6); never fill it with copy
+http://localhost:3000/
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono.small "assumption-drift"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.small.faint "Bar: misses split into b"
+  FAIL 40 :1 [1280px] computed contrast 4.35:1 < 4.5:1 on p.small.faint "The methodology has the "
+  FAIL 40 :1 [1280px] contrast 4.35:1 against the pixels behind < 4.5:1 on label.label "Company name or ticker"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p "Dataset: assumption-drif"
+  FAIL 40 :1 [1440px] a field's edge is under 3:1 against what surrounds it: input.input 1.39:1, input.input 1.39:1, select.input 1.… | fix: Draw the field in --color-muted, or fill it a step off the surface it sits on
+  FAIL 44d :1 [1920px] hero runs past the 1920x1080 screen (hero ends at 1393px) | fix: Cap vw-sized visuals and display sizes
+  REFLEX 39b :1 [1440px] control height outside 44 to 52px: input.input 56px | fix: Marketing controls stand 44 to 52px; app UI 32 to 40px with a 44px hit target
+  REFLEX 49b :1 [414px] link "View on EDGAR" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+  REFLEX 72 :1 [1440px] text crowds the edge of its box: details.panel bottom -580px
+  WARN F19 :1 [1440px] 4 font weights in running use (400, 500, 600, 700) | fix: Three weights at most, display and body together, picked as extremes
+  NOTE 44c :1 [1440px] hero runs past the 1440x900 fold (hero ends at 1393px) | fix: Size the display and the visual so the hero is one screen
+  NOTE 58 :1 [1440px] 267 words on one screen (from y=1150)
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73) | fix: 120px or more between sections, by the --section-gap steps
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+http://localhost:3000/about
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono.small "assumption-drift"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p "Dataset: assumption-drif"
+  NOTE 44c :1 [1440px] hero ends at 73px of a 900px screen
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 77 :1 [1440px] 1 thin section: div.stack (100% wide, no mass) | fix: Widen the body to ten of twelve columns and give it mass: a visual 300px tall or more, a set of three across, rows, or a statement (layout.md § 4 and § 5)
+http://localhost:3000/compare
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono.small "assumption-drift"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p "Dataset: assumption-drif"
+  FAIL 40 :1 [1440px] a field's edge is under 3:1 against what surrounds it: select.input 1.53:1, select.input 1.53:1, select.input …
+  NOTE 44c :1 [1440px] hero ends at 204px of a 900px screen
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 540px of nothing between the hero's last content (y 204) and the next section
+http://localhost:3000/methodology
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono.small "assumption-drift"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p "Dataset: assumption-drif"
+  REFLEX 25 :1 [1440px] running prose set too wide: p about 90 characters a line, p about 123 characters a line | fix: Cap the measure at 45 to 75ch
+  REFLEX 49b :1 [320px] link "github.com/Algo-nav/assumption-d" wraps to 2 lines (a)
+  WARN F19 :1 [1440px] 4 font weights in running use (400, 500, 600, 700)
+  NOTE 44c :1 [1440px] hero ends at 73px of a 900px screen
+  NOTE 58 :1 [1440px] 492 words on one screen (from y=2800)
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 78 :1 [1440px] section heads render at 20px under a 36px hero head | fix: h2 at --text-section (about 52px at 1440), item titles at --text-title (layout.md § 2)
+http://localhost:3000/misses
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono.small "assumption-drift"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p "Dataset: assumption-drif"
+  WARN F25 :1 [375px] a table opens with 5 columns off-screen (from "Reported")
+  NOTE 44c :1 [1440px] hero ends at 228px of a 900px screen
+  NOTE 58 :1 [1440px] 260 words on one screen (from y=2400)
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 672px of nothing between the hero's last content (y 228) and the fold
+http://localhost:3000/row/01DV4GWZ002WYJ1A8V8XEKTWR1
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on span.mono.small "assumption-drift"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p.mono.small "01DV4GWZ002WYJ1A8V8XEKTW"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p.small.faint "Statement 5 of 56 for Sa"
+  FAIL 40 :1 [1280px] contrast 3.97:1 against the pixels behind < 4.5:1 on p "Dataset: assumption-drif"
+  FAIL 49a :1 [320px] control "Previous EPS GAAP statementFY202" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+  FAIL 49a :1 [320px] control "Next EPS GAAP statementFY2020, s" wraps to 2 lines (a.next)
+  WARN F18 :1 [375px] slot "review-machine" renders at 0 x 0px on a phone | fix: The slot collapsed: give it width: 100% and an aspect-ratio in the stacked layout
+  WARN F18 :1 [1440px] slot "review-machine" renders at 0 x 0px | fix: The slot collapsed: give it a width from its track and a real aspect-ratio, never a percentage of a shrink-to-fit parent
+  NOTE 44c :1 [1440px] hero ends at 380px of a 900px screen
+  NOTE 58 :1 [1440px] 81 words on one screen (from y=150) | fix: Close to the 80-word screen budget
+  NOTE 59 :1 [1440px] smallest gap between sections is 73px (gaps: 73)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 520px of nothing between the hero's last content (y 380) and the fold
+app/globals.css
+  REFLEX 7b :160 pure #fff: background: var(--card) (.card) | fix: Tint the base toward the anchor hue
+  REFLEX 7b :186 pure #fff: background: var(--card) (.input)
+  REFLEX 7b :344 pure #fff: background: var(--card) (.tile)
+  REFLEX 7b :395 pure #fff: background: var(--card) (.company-card)
+  REFLEX 7b :516 pure #fff: background: var(--card) (.stat)
+  REFLEX 7b :559 pure #fff: background: var(--card) (.pill)
+  REFLEX 7b :754 pure #fff: background: var(--card) (.row-nav a)
+  REFLEX 7b :793 pure #fff: background: var(--card) (.chart)
+  WAIVER 7b :1 waiver on 7b REJECTED (guard: the stamp does not declare surface: absol… | fix: Fix the gate, or satisfy the guard and say why in the page's own words
+  WARN F7 :159 same container recipe on 6 selectors (.card, .input, .company-card, .stat...) | fix: Vary weight, radius, or fill by role; not every box is the same box
+sloplint: 28 FAIL, 14 REFLEX, 7 WARN, 1 REJECTED, 31 NOTE across 1 file(s) and 7 URL(s).

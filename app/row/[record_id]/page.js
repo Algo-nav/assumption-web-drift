@@ -1,3 +1,4 @@
+import ReviewMachine from "../../components/ReviewMachine";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRow, getNeighbours } from "../../lib/data";
@@ -76,9 +77,8 @@ export default async function RowPage({ params }) {
           <span className="status" data-testid="review-label">
             {handReviewed ? "review: hand-reviewed" : "review: not reviewed"}
           </span>
-          {/* Layout slots, not built yet: a machine-reviewed label and a flag button go here. */}
-          <span data-slot="review-machine" />
-          <span data-slot="flag" />
+          {/* Layout slot, not built yet: a flag button goes here. */}
+          <ReviewMachine row={r} />
         </div>
         <p className="small" style={{ margin: "var(--s2) 0 0" }}>
           {r.reviewer ? <>Reviewed by hand by {r.reviewer.charAt(0).toUpperCase() + r.reviewer.slice(1)}</> : null}

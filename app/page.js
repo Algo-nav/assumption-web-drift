@@ -18,7 +18,6 @@ export default function Home() {
   const rows = getAllRows();
   const s = summarise(rows);
   const companies = getCompanies();
-  const pct = s.neverAcknowledgedShare == null ? "n/a" : `${(s.neverAcknowledgedShare * 100).toFixed(1)}%`;
   const fmt = (n) => n.toLocaleString("en-US");
 
   const worseNever = rows.filter((r) => r.status === "missed" && r.direction === "worse" && !r.acknowledged).length;
@@ -32,13 +31,17 @@ export default function Home() {
 
   return (
     <div className="stack">
-      <section className="hero">
-        <h1>What companies guided, and what happened next</h1>
-        <p className="lede">
-          Every number a company gave in an 8-K earnings release about its own future, set against the figure it
-          reported later, with the filings to check.
-        </p>
-        <CompanyFinder companies={companies}>
+      <CompanyFinder
+        companies={companies}
+        head={
+          <>
+            <h1>What companies guided, and what happened next</h1>
+            <p className="lede">
+              Guidance from 8-K earnings releases, matched to what was reported, with the filings to check.
+            </p>
+          </>
+        }
+      >
           <div className="tiles" data-testid="tiles">
             <Link href="/misses" className="tile" data-tile="worse-never">
               <b>{fmt(worseNever)}</b>
@@ -53,8 +56,12 @@ export default function Home() {
               <span>statements across {companies.length} companies</span>
             </Link>
           </div>
-        </CompanyFinder>
-      </section>
+          <p className="record-line small" data-testid="headline">
+            <b data-stat="rows">{fmt(s.rows)}</b> statements, <b data-stat="resolved">{fmt(s.resolved)}</b> resolved,{" "}
+            <b data-stat="met">{fmt(s.met)}</b> met, <b data-stat="missed">{fmt(s.missed)}</b> missed,{" "}
+            <b data-stat="never">{fmt(s.neverAcknowledged)}</b> never acknowledged
+          </p>
+      </CompanyFinder>
 
       {example ? (
         <details className="panel" id="how-to-read">
@@ -99,30 +106,7 @@ export default function Home() {
         </details>
       ) : null}
 
-      <section aria-labelledby="numbers">
-        <div className="section-head">
-          <h2 id="numbers">The record in full</h2>
-        </div>
-        <div className="stat-grid" data-testid="headline">
-          <div className="stat"><b data-stat="rows">{fmt(s.rows)}</b><span>rows</span></div>
-          <div className="stat"><b data-stat="resolved">{fmt(s.resolved)}</b><span>resolved (met or missed)</span></div>
-          <div className="stat"><b data-stat="met">{fmt(s.met)}</b><span>met</span></div>
-          <div className="stat"><b data-stat="missed">{fmt(s.missed)}</b><span>missed</span></div>
-          <div className="stat"><b data-stat="worse">{fmt(s.missedWorse)}</b><span>missed, worse than guided</span></div>
-          <div className="stat"><b data-stat="better">{fmt(s.missedBetter)}</b><span>missed, better than guided</span></div>
-          <div className="stat"><b data-stat="acknowledged">{fmt(s.acknowledged)}</b><span>acknowledged in a later filing</span></div>
-          <div className="stat">
-            <b data-stat="never">{pct}</b>
-            <span>of misses never acknowledged ({fmt(s.neverAcknowledged)} of {fmt(s.missed)})</span>
-          </div>
-        </div>
-        <p className="small faint" style={{ marginTop: "var(--s2)", maxWidth: 640 }}>
-          Counted from the {fmt(s.rows)} rows in the release file. A beat counts as a miss, so better and worse
-          are split out. The methodology page explains what acknowledged means.
-        </p>
-      </section>
-
-      <section id="request" aria-labelledby="request-h" style={{ borderTop: "1px solid var(--line)", paddingTop: "var(--s4)", scrollMarginTop: "var(--s2)" }}>
+      <section id="request" className="band" aria-labelledby="request-h">
         <h2 id="request-h">Request a company</h2>
         <p style={{ margin: "var(--s1) 0 var(--s3)", maxWidth: 640 }}>
           Not here yet? Request it and we build the record.

@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import DirectionBar from "./DirectionBar";
 
-// The search box is the primary element of the home page. `children` (the stat tiles) render between the
-// box and the company grid, so the box stays first and the grid still filters as you type.
-export default function CompanyFinder({ companies, children }) {
+// The hero (`head`, the search box, then `children`: the stat tiles and the counts line) and the company grid
+// below it are separate sections that share the search state, so the grid still filters as you type.
+export default function CompanyFinder({ companies, head, children }) {
   const [q, setQ] = useState("");
   const needle = q.trim().toLowerCase();
   const shown = needle
@@ -15,6 +15,8 @@ export default function CompanyFinder({ companies, children }) {
 
   return (
     <>
+      <section className="hero">
+      {head}
       <div className="hero-search">
         <label className="sr-only" htmlFor="company-search">Find a company</label>
         <input
@@ -29,8 +31,9 @@ export default function CompanyFinder({ companies, children }) {
       </div>
 
       {children}
+      </section>
 
-      <section id="companies" aria-labelledby="companies-h" style={{ marginTop: "var(--s4)", scrollMarginTop: "var(--s2)" }}>
+      <section id="companies" aria-labelledby="companies-h" style={{ scrollMarginTop: "var(--s2)" }}>
         <div className="section-head">
           <h2 id="companies-h">{companies.length} companies</h2>
           <span className="small faint" aria-live="polite">
