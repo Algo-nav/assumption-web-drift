@@ -11,6 +11,7 @@ export default function Header() {
         </Link>
         <nav aria-label="Main" className="nav">
           <Link href="/">Companies</Link>
+          <Link href="/misses">Misses</Link>
           <Link href="/compare">Compare</Link>
           <Link href="/methodology">Methodology</Link>
           <Link href="/about">About</Link>

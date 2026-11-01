@@ -735,22 +735,47 @@ dl.facts dd {
   stroke-width: 1;
 }
 .chart .link-line {
-  stroke-width: 1;
+  stroke-width: 1px;
   opacity: 0.55;
 }
 .chart .hit {
   fill: transparent;
 }
+/* Marks keep their pixel size whatever the chart is scaled to: bar 3px and dot radius 4px at 1280,
+   2px and 3px at 375. */
+.chart .bar,
+.chart .dot,
+.chart .link-line {
+  vector-effect: non-scaling-stroke;
+}
 .chart .bar {
-  stroke-width: 5;
+  stroke-width: 3px;
   stroke-linecap: butt;
+}
+.chart .dot {
+  stroke-width: 8px;
+  stroke-linecap: round;
+}
+.chart .dot-pick {
+  stroke-width: 12px;
+}
+@media (max-width: 639px) {
+  .chart .bar {
+    stroke-width: 2px;
+  }
+  .chart .dot {
+    stroke-width: 6px;
+  }
+  .chart .dot-pick {
+    stroke-width: 10px;
+  }
 }
 .chart .pt {
   cursor: pointer;
 }
 .chart .pt:hover .bar,
 .chart .pt:focus-visible .bar {
-  stroke-width: 8;
+  stroke-width: 6px;
 }
 .chart .pt:focus-visible {
   outline: none;
@@ -774,9 +799,6 @@ dl.facts dd {
 .chart .tone-open {
   stroke: var(--mark-open);
   fill: var(--mark-open);
-}
-.chart .dot {
-  stroke: none;
 }
 .chart .dim {
   opacity: 0.25;
@@ -849,4 +871,74 @@ dl.facts dd {
 }
 .prose strong {
   color: var(--ink);
+}
+
+/* Fiscal-year groups on the company page */
+details.year {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+details.year > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 48px;
+  padding: 0 var(--s2);
+  cursor: pointer;
+  list-style: none;
+  color: var(--ink);
+  border-radius: 8px;
+}
+details.year > summary::-webkit-details-marker {
+  display: none;
+}
+details.year > summary::before {
+  content: "+";
+  display: inline-block;
+  width: 16px;
+  color: var(--faint);
+}
+details.year[open] > summary::before {
+  content: "-";
+}
+details.year > summary:hover {
+  background: rgba(20, 20, 20, 0.04);
+}
+details.year .year-name {
+  font-weight: 600;
+}
+details.year > .table-scroll {
+  padding: 0 var(--s2) var(--s1);
+}
+table.data {
+  table-layout: fixed;
+  min-width: 1002px;
+}
+table.data th,
+table.data td {
+  padding-right: var(--s1);
+}
+table.data td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chart .axis-note {
+  font-style: italic;
+}
+
+table.data.misses {
+  min-width: 1000px;
+}
+table.data th .sort {
+  color: var(--faint);
+  text-decoration: none;
+}
+table.data th .sort:hover,
+table.data th[aria-sort] .sort {
+  color: var(--ink);
+  text-decoration: underline;
+}
+table.data th {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

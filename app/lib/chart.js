@@ -82,3 +82,27 @@ export function formatTick(v, fam) {
   if (fam === "basis points") return `${trim(v)} bps`;
   return trim(v);
 }
+
+// "log" when the largest plotted value is more than 10 times the smallest, "linear" otherwise.
+// Percent metrics are always linear, and so is anything that reaches zero or below, which a log axis cannot show.
+export function scaleFor(group) {
+  if (group.family === "percent" || group.family === "basis points") return "linear";
+  const vals = group.points.flatMap((p) => [p.lo, p.hi, ...(p.rep == null ? [] : [p.rep])]);
+  const min = Math.min(...vals);
+  const max = Math.max(...vals);
+  return min > 0 && max / min > 10 ? "log" : "linear";
+}
+
+// Ticks at 1, 2 and 5 times each power of ten, thinned to about `n` when the range is wide.
+export function logTicks(min, max, n = 5) {
+  const all = [];
+  for (let k = Math.floor(Math.log10(min)); k <= Math.ceil(Math.log10(max)); k++) {
+    for (const m of [1, 2, 5]) {
+      const v = m * 10 ** k;
+      if (v >= min && v <= max) all.push(v);
+    }
+  }
+  const decades = all.filter((v) => Math.abs(Math.log10(v) - Math.round(Math.log10(v))) < 1e-9);
+  if (all.length <= n + 2) return all;
+  return decades.length >= 2 ? decades : all.filter((_, i) => i % Math.ceil(all.length / n) === 0);
+}

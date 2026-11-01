@@ -92,3 +92,9 @@ export function describeRow(r) {
   }
   return `${guided}; reported ${formatValue(r.reported, r.unit)}${when}; ${where}.`;
 }
+
+// A distance in the metric's own unit: "$0.25 per share", "$2.9 billion", "15 points", "50 bps".
+export function formatBy(n, unit) {
+  if (n == null) return "";
+  return unit === "percent" ? `${num(n)} points` : one(n, unit);
+}

@@ -28,7 +28,7 @@ function withoutExcerpts(html) {
 test.describe("copy rules", () => {
   test("no em-dash and no buy-side in any page source", async ({ request }) => {
     test.setTimeout(180_000);
-    const urls = ["/", "/compare", "/methodology", "/about", "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025"];
+    const urls = ["/", "/misses", "/misses?side=better", "/compare", "/methodology", "/about", "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025"];
     for (const t of new Set(records.map((r) => r.ticker))) urls.push(`/company/${t}`);
     for (const r of records) urls.push(`/row/${r.record_id}`);
 
@@ -76,7 +76,7 @@ test.describe("excerpts are quoted exactly", () => {
 
 test.describe("mobile", () => {
   test.use({ viewport: { width: 375, height: 800 } });
-  for (const url of ["/", "/company/NVDA", "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025", "/methodology", "/about"]) {
+  for (const url of ["/", "/misses", "/company/NVDA", "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025", "/methodology", "/about"]) {
     test(`no horizontal page scroll at 375px: ${url}`, async ({ page }) => {
       await page.goto(url);
       const [scroll, inner] = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);

@@ -13,6 +13,7 @@ const pages = [
   ["home", "/"],
   ["company-nvda", "/company/NVDA"],
   ["row", `/row/${row.record_id}`],
+  ["misses", "/misses"],
   ["compare", "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025"],
 ];
 

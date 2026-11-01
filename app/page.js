@@ -40,7 +40,7 @@ export default function Home() {
         </p>
         <CompanyFinder companies={companies}>
           <div className="tiles" data-testid="tiles">
-            <Link href="/#companies" className="tile" data-tile="worse-never">
+            <Link href="/misses" className="tile" data-tile="worse-never">
               <b>{fmt(worseNever)}</b>
               <span>worse-side misses never acknowledged</span>
             </Link>

@@ -1,7 +1,7 @@
-import { niceTicks, formatTick } from "../lib/chart";
+import { niceTicks, logTicks, scaleFor, formatTick } from "../lib/chart";
 
 const W = 520;
-const H = 240;
+const H = 480;
 const M = { l: 72, r: 16, t: 24, b: 32 };
 const DAY = 86400000;
 
@@ -16,7 +16,9 @@ function tone(p) {
 // `highlight` maps a row id to a short label; every other point is dimmed.
 export default function Chart({ group, highlight = null }) {
   const pts = group.points;
-  const ys = pts.flatMap((p) => [p.lo, p.hi, ...(p.rep == null ? [] : [p.rep])]);
+  const scale = scaleFor(group);
+  const T = scale === "log" ? Math.log10 : (v) => v;
+  const ys = pts.flatMap((p) => [p.lo, p.hi, ...(p.rep == null ? [] : [p.rep])]).map(T);
   let y0 = Math.min(...ys);
   let y1 = Math.max(...ys);
   if (y0 === y1) {
@@ -24,7 +26,7 @@ export default function Chart({ group, highlight = null }) {
     y0 -= pad;
     y1 += pad;
   }
-  const yPad = (y1 - y0) * 0.08;
+  const yPad = (y1 - y0) * 0.06;
   y0 -= yPad;
   y1 += yPad;
   const xs = pts.flatMap((p) => [p.x0, ...(p.x1 == null ? [] : [p.x1])]);
@@ -35,9 +37,9 @@ export default function Chart({ group, highlight = null }) {
   x1 += xPad;
 
   const X = (v) => M.l + ((v - x0) / (x1 - x0)) * (W - M.l - M.r);
-  const Y = (v) => H - M.b - ((v - y0) / (y1 - y0)) * (H - M.t - M.b);
+  const Y = (v) => H - M.b - ((T(v) - y0) / (y1 - y0)) * (H - M.t - M.b);
 
-  const yTicks = niceTicks(y0, y1, 4);
+  const yTicks = scale === "log" ? logTicks(10 ** y0, 10 ** y1, 5) : niceTicks(y0, y1, 5);
   const yearFrom = new Date(x0).getUTCFullYear() + 1;
   const yearTo = new Date(x1).getUTCFullYear();
   const step = yearTo - yearFrom > 6 ? 2 : 1;
@@ -47,9 +49,10 @@ export default function Chart({ group, highlight = null }) {
   const ordered = highlight ? [...pts].sort((a, b) => Number(Boolean(highlight[a.id])) - Number(Boolean(highlight[b.id]))) : pts;
 
   return (
-    <div className="chart" data-chart data-metric={group.title}>
+    <div className="chart" data-chart data-metric={group.title} data-scale={scale}>
       <h3>{group.title}</h3>
       <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label={`${group.title}: guided ranges and reported figures over time`}>
+        {scale === "log" ? <text x={M.l} y={12} className="axis-note">log scale</text> : null}
         {yTicks.map((v) => (
           <g key={v}>
             <line className="grid-line" x1={M.l} x2={W - M.r} y1={Y(v)} y2={Y(v)} />
@@ -76,7 +79,9 @@ export default function Chart({ group, highlight = null }) {
                 <line className={`link-line ${c}`} x1={px} y1={mid} x2={X(p.x1)} y2={Y(p.rep)} />
               ) : null}
               <line className={`bar ${c}`} x1={px} x2={px} y1={top - 1.5} y2={bottom + 1.5} />
-              {p.rep != null && p.x1 != null ? <circle className={`dot ${c}`} cx={X(p.x1)} cy={Y(p.rep)} r={picked ? 5 : 3} /> : null}
+              {p.rep != null && p.x1 != null ? (
+                <line className={`dot ${c}${picked ? " dot-pick" : ""}`} x1={X(p.x1)} x2={X(p.x1)} y1={Y(p.rep)} y2={Y(p.rep)} />
+              ) : null}
               {picked ? (
                 <text className="pick-label" x={px} y={top - 8} textAnchor="middle">{picked}</text>
               ) : null}

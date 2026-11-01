@@ -40,7 +40,7 @@ test.describe("company page", () => {
     const chart = page.locator('[data-chart][data-metric^="revenue"]').first();
     await expect(chart).toBeVisible();
     expect(await chart.locator("[data-point]").count()).toBeGreaterThan(2);
-    await expect(chart.locator("circle").first()).toBeAttached();
+    await expect(chart.locator(".dot").first()).toBeAttached();
   });
 
   test("pill filters change the row count", async ({ page }) => {

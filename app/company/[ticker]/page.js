@@ -25,6 +25,7 @@ const STATUS_PILLS = [
 ];
 
 const VISIBLE_CHARTS = 4;
+const OPEN_YEARS = 2;
 
 export default async function CompanyPage({ params, searchParams }) {
   const { ticker } = await params;
@@ -43,6 +44,14 @@ export default async function CompanyPage({ params, searchParams }) {
   const rows = all.filter(
     (r) => (!metric || r.metricBase === metric) && (!fy || r.fiscalYear === fy) && (!statusFn || statusFn(r))
   );
+  // Fiscal years, newest first, each with its own filtered rows (newest statement first). The two newest are open.
+  const groupsByYear = new Map();
+  for (const r of [...rows].sort((x, y) => y.statedAt.localeCompare(x.statedAt) || x.id.localeCompare(y.id))) {
+    const k = r.fiscalYear || "none";
+    if (!groupsByYear.has(k)) groupsByYear.set(k, []);
+    groupsByYear.get(k).push(r);
+  }
+  const byYear = [...groupsByYear.entries()].sort(([a], [b]) => (a === "none" ? -1 : b === "none" ? 1 : b.localeCompare(a)));
   const s = summarise(all);
   const name = all[0].company;
   const short = shortName(name);
@@ -147,39 +156,52 @@ export default async function CompanyPage({ params, searchParams }) {
             <Link href={`/company/${tk}`} className="btn btn-sm">Clear filters</Link>
           </div>
         ) : (
-          <div className="table-scroll">
-            <table className="data">
-              <thead>
-                <tr>
-                  <th>Metric</th>
-                  <th>Basis</th>
-                  <th>Period</th>
-                  <th className="num">Guided range</th>
-                  <th>Stated</th>
-                  <th className="num">Reported</th>
-                  <th>Outcome date</th>
-                  <th>Status</th>
-                  <th>Direction</th>
-                  <th>Acknowledged</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id} data-row>
-                    <td className="nowrap"><Link href={`/row/${r.id}`}>{r.metricBase}</Link></td>
-                    <td className="nowrap">{r.basis}</td>
-                    <td className="nowrap mono">{r.period}</td>
-                    <td className="num">{formatGuided(r.low, r.high, r.unit)}</td>
-                    <td className="nowrap mono">{r.statedAt}</td>
-                    <td className="num">{r.reported == null ? <span className="faint">none yet</span> : formatValue(r.reported, r.unit)}</td>
-                    <td className="nowrap mono">{r.reportedAt || ""}</td>
-                    <td><StatusBadge status={r.status} direction={r.direction} /></td>
-                    <td><DirectionText direction={r.direction} /></td>
-                    <td>{r.acknowledged ? "yes" : "no"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="stack-tight">
+            {byYear.map(([year, list], i) => (
+              <details key={year} className="year" open={i < OPEN_YEARS} data-year={year}>
+                <summary>
+                  <span className="year-name">{year === "none" ? "Other" : `FY${year}`}</span>
+                  <span className="small faint">{list.length} row{list.length === 1 ? "" : "s"}</span>
+                </summary>
+                <div className="table-scroll">
+                  <table className="data">
+                    <colgroup>
+                      {[136, 72, 80, 180, 88, 112, 88, 84, 64, 98].map((w, k) => <col key={k} style={{ width: w }} />)}
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>Metric</th>
+                        <th>Basis</th>
+                        <th>Period</th>
+                        <th className="num">Guided range</th>
+                        <th>Stated</th>
+                        <th className="num">Reported</th>
+                        <th>Outcome date</th>
+                        <th>Status</th>
+                        <th>Direction</th>
+                        <th>Acknowledged</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {list.map((r) => (
+                        <tr key={r.id} data-row>
+                          <td className="nowrap"><Link href={`/row/${r.id}`}>{r.metricBase}</Link></td>
+                          <td className="nowrap">{r.basis}</td>
+                          <td className="nowrap mono">{r.period}</td>
+                          <td className="num">{formatGuided(r.low, r.high, r.unit)}</td>
+                          <td className="nowrap mono">{r.statedAt}</td>
+                          <td className="num">{r.reported == null ? <span className="faint">none yet</span> : formatValue(r.reported, r.unit)}</td>
+                          <td className="nowrap mono">{r.reportedAt || ""}</td>
+                          <td><StatusBadge status={r.status} direction={r.direction} /></td>
+                          <td><DirectionText direction={r.direction} /></td>
+                          <td>{r.acknowledged ? "yes" : "no"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            ))}
           </div>
         )}
       </section>

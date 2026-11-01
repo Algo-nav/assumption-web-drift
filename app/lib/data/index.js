@@ -1,7 +1,9 @@
 // In-memory dataset. Loaded once per server process; every page reads through these functions.
 import { loadRawRecords } from "./source.js";
-import { higherIsBetter, directionOf } from "./polarity.js";
+import { higherIsBetter, directionOf, side } from "./polarity.js";
 import { SECTORS } from "./sectors.js";
+
+const UNIT_TO_BASE = { "USD billions": 1e9, "USD millions": 1e6, "basis points": 0.01 };
 
 const KEY = Symbol.for("assumption-drift.store");
 
@@ -38,6 +40,21 @@ function normalise(r) {
     r.status === "missed"
       ? directionOf(a.target_low, a.target_high, reported, higherIsBetter(a.metric))
       : null;
+  // How far outside the guided range the reported figure landed, as a percent of the bound it crossed.
+  // beyondAbs is the distance in the row's own unit; beyondBase puts it on one scale (dollars, or percentage
+  // points with basis points divided by 100) so rows of the same metric sort together.
+  let beyondPct = null;
+  let beyondAbs = null;
+  let beyondBase = null;
+  if (r.status === "missed" && reported != null) {
+    const sd = side(a.target_low, a.target_high, reported);
+    const bound = sd === "above" ? (a.target_high ?? a.target_low) : sd === "below" ? (a.target_low ?? a.target_high) : null;
+    if (bound != null) {
+      beyondAbs = Math.abs(reported - bound);
+      beyondBase = beyondAbs * (UNIT_TO_BASE[a.unit] ?? 1);
+      if (bound) beyondPct = (beyondAbs / Math.abs(bound)) * 100;
+    }
+  }
   return {
     id: r.record_id,
     ticker: r.ticker,
@@ -59,6 +76,10 @@ function normalise(r) {
     outcome: r.outcome ? evidence(r.outcome.evidence) : null,
     status: r.status,
     direction,
+    beyondPct,
+    beyondAbs,
+    beyondBase,
+    percentType: a.unit === "percent" || a.unit === "basis points",
     acknowledged: Boolean(r.acknowledged_at),
     acknowledgedAt: r.acknowledged_at,
     acknowledgement: evidence(r.acknowledgement_evidence),
@@ -127,9 +148,17 @@ export function getSector(ticker) {
   return SECTORS[String(ticker).toUpperCase()] || null;
 }
 
-// Previous and next statement for the same company and metric, in the order they were stated.
+// Fiscal period as a sortable number: "Q2 FY2024" -> 20242, "FY2024" -> 20245 (the year sorts after its quarters).
+export function periodKey(p) {
+  const m = /^(?:Q([1-4]) )?FY(\d{4})$/.exec(p || "");
+  return m ? Number(m[2]) * 10 + (m[1] ? Number(m[1]) : 5) : 0;
+}
+
+// Previous and next statement for the same company and metric: by stated date, then period.
 export function getNeighbours(row) {
-  const list = getCompanyRows(row.ticker).filter((r) => r.metric === row.metric);
+  const list = getCompanyRows(row.ticker)
+    .filter((r) => r.metric === row.metric)
+    .sort((x, y) => x.statedAt.localeCompare(y.statedAt) || periodKey(x.period) - periodKey(y.period) || x.id.localeCompare(y.id));
   const i = list.findIndex((r) => r.id === row.id);
   return { prev: list[i - 1] || null, next: list[i + 1] || null, position: i + 1, total: list.length };
 }
