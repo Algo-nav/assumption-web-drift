@@ -174,7 +174,7 @@ test.describe("5. /misses", () => {
     await page.getByRole("group", { name: "Side" }).getByRole("link", { name: /Better than guided/ }).click();
     await expect(page.locator("tr[data-row]")).toHaveCount(missed.length - worse.length);
     await expect(page.getByRole("columnheader")).toHaveText(
-      ["Company", "Metric", "Period", "Guided range", "Reported", "By", "Beyond the guide \u2193", "Stated", "Acknowledged"],
+      ["Company", "Metric", "Period", "Guided range", "Reported", "By", "Beyond range \u2193", "Stated", "Acknowledged"],
       { useInnerText: true }
     );
   });
@@ -184,7 +184,7 @@ test.describe("5. /misses", () => {
     const pcts = async () => (await page.locator("td[data-pct]").evaluateAll((els) => els.map((e) => e.dataset.pct))).filter(Boolean).map(Number);
     const desc = await pcts();
     expect(desc).toEqual([...desc].sort((a, b) => b - a));
-    await page.getByRole("link", { name: /Beyond the guide/ }).click();
+    await page.getByRole("link", { name: /Beyond range/ }).click();
     await expect(page).toHaveURL(/sort=pct&dir=asc/);
     const asc = await pcts();
     expect(asc).toEqual([...asc].sort((a, b) => a - b));
@@ -230,7 +230,7 @@ test.describe("5. /misses", () => {
 
     // A dollar metric defaults to percent, and both headers still toggle.
     await page.goto("/misses?metric=revenue");
-    await expect(page.getByRole("columnheader", { name: /^Beyond the guide/ })).toHaveAttribute("aria-sort", "descending");
+    await expect(page.getByRole("columnheader", { name: /^Beyond range/ })).toHaveAttribute("aria-sort", "descending");
     await page.getByRole("link", { name: /^By( |$)/ }).click();
     await expect(page).toHaveURL(/sort=by&dir=desc/);
     const byRev = await by();
@@ -239,7 +239,7 @@ test.describe("5. /misses", () => {
     await expect(page).toHaveURL(/sort=by&dir=asc/);
     const asc = await by();
     expect(asc).toEqual([...asc].sort((a, b) => a - b));
-    await page.getByRole("link", { name: /^Beyond the guide/ }).click();
+    await page.getByRole("link", { name: /^Beyond range/ }).click();
     await expect(page).toHaveURL(/sort=pct&dir=desc/);
   });
 });

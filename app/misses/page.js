@@ -13,7 +13,7 @@ const COLUMNS = [
   ["guided", "Guided range", "num"],
   ["reported", "Reported", "num"],
   ["by", "By", "num", true],
-  ["pct", "Beyond the guide", "num", true],
+  ["pct", "Beyond range", "num", true, "Beyond the guided range"],
   ["stated", "Stated", "", true],
   ["ack", "Acknowledged"],
 ];
@@ -121,10 +121,11 @@ export default async function MissesPage({ searchParams }) {
               </colgroup>
               <thead>
                 <tr>
-                  {COLUMNS.map(([key, label, cls, sortable]) => (
+                  {COLUMNS.map(([key, label, cls, sortable, tip]) => (
                     <th
                       key={key}
                       className={cls}
+                      title={tip}
                       aria-sort={sortable && sort === key ? (dir === "asc" ? "ascending" : "descending") : undefined}
                     >
                       {sortable ? (

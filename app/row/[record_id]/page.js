@@ -2,7 +2,7 @@ import ReviewMachine from "../../components/ReviewMachine";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRow, getNeighbours } from "../../lib/data";
-import { formatGuided, formatValue, describeRow } from "../../lib/format";
+import { formatGuided, formatValue, describeRow, formatClaim } from "../../lib/format";
 import { StatusBadge } from "../../components/StatusBadge";
 import Excerpt from "../../components/Excerpt";
 
@@ -27,7 +27,7 @@ export default async function RowPage({ params }) {
           <Link href={`/company/${r.ticker}`}>{r.company}</Link>
         </p>
         <h1>{r.metric}, {r.period}</h1>
-        <p className="lede">{r.claim}</p>
+        <p className="lede">{formatClaim(r.claim)}</p>
         <p className="callout" data-testid="what-this-means">{describeRow(r)}</p>
         <p className="mono small faint" style={{ margin: "var(--s2) 0 0" }}>{r.id}</p>
       </section>
@@ -91,7 +91,6 @@ export default async function RowPage({ params }) {
         {prev ? (
           <Link href={`/row/${prev.id}`} data-nav="prev">
             <span className="small faint">Previous {r.metric} statement</span>
-            <br />
             {prev.period}, stated <span className="mono">{prev.statedAt}</span>
           </Link>
         ) : (
@@ -100,7 +99,6 @@ export default async function RowPage({ params }) {
         {next ? (
           <Link href={`/row/${next.id}`} data-nav="next" className="next">
             <span className="small faint">Next {r.metric} statement</span>
-            <br />
             {next.period}, stated <span className="mono">{next.statedAt}</span>
           </Link>
         ) : (

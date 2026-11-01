@@ -2,6 +2,7 @@
  * floor: 0 FAIL · fixed: 34, 48, 7a, 3, F3, F7, 26b
  * surface: absolute (white cards by the owner's choice) · built: the project · redesign: polish · v2.0.0 */
 /* Hallmark · waive 7b · var(--card) white on company, row and tile cards · the owner keeps those cards white and tints the secondary panels instead */
+/* Hallmark · dismissed F25 · intentional: wide tables scroll sideways at 375px, cue shown */
 @import "tailwindcss";
 
 :root {
@@ -764,8 +765,24 @@ dl.facts dd {
 .row-nav a:hover {
   border-color: var(--ink);
 }
+.row-nav a > .small {
+  display: block;
+}
 .row-nav .next {
   text-align: right;
+}
+@media (max-width: 399px) {
+  .row-nav {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .row-nav a {
+    width: 100%;
+  }
+  .row-nav a > .small {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 .row-nav .none {
   border: 1px dashed var(--line);

@@ -46,6 +46,12 @@ function bare(n, unit) {
   }
 }
 
+// The dataset's claim sentence writes negative dollars as "$-0.04". Re-print each one with money(), as the summary panel does.
+// Only the amount is touched; the rest of the sentence stays as the dataset wrote it.
+export function formatClaim(claim) {
+  return (claim || "").replace(/\$-(\d[\d,]*(?:\.\d+)?)/g, (_, n) => money(-Number(n.replace(/,/g, "")), ""));
+}
+
 const TAIL = { "USD billions": " billion", "USD millions": " million", "USD per share": " per share", "basis points": " bps" };
 
 export function formatValue(n, unit) {
