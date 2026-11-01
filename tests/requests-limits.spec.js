@@ -14,7 +14,7 @@ const count = () => {
 
 const post = (request, ip, extra = {}) =>
   request.post("/api/requests", {
-    headers: { "x-real-ip": ip },
+    headers: { "x-forwarded-for": ip },
     data: { company: "Costco", email: "a@example.com", role: "CIO", ...extra },
   });
 

@@ -2,7 +2,9 @@
   "name": "assumption-web-drift",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "fetch-data": "node scripts/fetch-data.mjs",
     "predev": "node scripts/fetch-data.mjs",
@@ -18,7 +20,8 @@
     "marked": "^16.0.0",
     "next": "16.4.3",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sanitize-html": "^2.18.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

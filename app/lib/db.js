@@ -13,9 +13,17 @@ export function getRequestsDb() {
   }
   if (cachedDb) return cachedDb;
 
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  // The file holds requester emails: owner-only for anything this process creates.
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true, mode: 0o700 });
   const db = new Database(dbPath);
+  try {
+    fs.chmodSync(dbPath, 0o600);
+  } catch (err) {
+    console.warn(`could not restrict permissions on ${dbPath}: ${err.message}`);
+  }
   db.pragma("journal_mode = WAL");
+  // Wait for a competing writer (a second process on the same file) instead of failing straight away.
+  db.pragma("busy_timeout = 5000");
   db.exec(`
     CREATE TABLE IF NOT EXISTS company_requests (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

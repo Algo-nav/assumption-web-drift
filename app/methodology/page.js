@@ -1,10 +1,11 @@
-import { marked } from "marked";
 import { loadWriteup } from "../lib/data/source";
+import { renderWriteup } from "../lib/writeup";
 
 export const metadata = { title: "Methodology" };
 
 export default function Methodology() {
-  const html = marked.parse(loadWriteup(), { gfm: true });
+  // The write-up is third-party content: it is sanitized to a small allowlist before it is injected as HTML.
+  const html = renderWriteup(loadWriteup());
   return (
     <div className="stack">
       <p className="card small" style={{ margin: 0 }}>

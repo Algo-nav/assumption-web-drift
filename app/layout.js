@@ -1,4 +1,5 @@
 import { Boldonse, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { connection } from "next/server";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -32,7 +33,9 @@ export const metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  // Render per request so Next can stamp the CSP nonce from proxy.js on its scripts (static pages have no request).
+  await connection();
   return (
     <html lang="en" className={`${boldonse.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable}`}>
       <body>

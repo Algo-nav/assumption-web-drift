@@ -10,3 +10,7 @@ export const REQUEST_ROLES = ["Analyst", "PM", "Director of research", "CIO", "O
 
 export const REQUESTS_PER_IP_PER_HOUR = 5;
 export const REQUESTS_PER_DAY = 50;
+
+// Request-form size limits. The body cap is checked while streaming; the field cap applies to every string field.
+export const MAX_REQUEST_BODY_BYTES = 4 * 1024;
+export const MAX_REQUEST_FIELD_CHARS = 200;

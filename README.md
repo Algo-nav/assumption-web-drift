@@ -18,6 +18,10 @@ Without `REQUESTS_DB_PATH` the request form returns 503 and shows no success mes
 - `release.jsonl` from `Nav772/assumption-drift` on Hugging Face (`data/assumption_drift.jsonl` in that repo)
 - `WRITEUP.md` from `Algo-nav/assumption-drift` on GitHub
 
+Both are pinned to a commit SHA, not a branch. The two revisions live in `scripts/data-sources.mjs`; to publish new data, change
+them there, rebuild, and review the `data/` diff first. Downloads are size-capped, and the write-up is sanitized to a small
+HTML allowlist before it is rendered (`app/lib/writeup.js`).
+
 If a download fails and an earlier copy exists, the earlier copy is kept. Rows are read in
 `app/lib/data/source.js`; replace that one file to read from Postgres.
 
@@ -30,3 +34,7 @@ If a download fails and an earlier copy exists, the earlier copy is kept. Rows a
 - Build command: `npm install && npm run build`
 - Start command: `npm run start -- -p $PORT`
 - Environment variable: `REQUESTS_DB_PATH`, a file path on a mounted volume, for example `/data/requests.sqlite3`
+- Run a single instance. The request limits are enforced in one SQLite write transaction, which is safe across processes on one
+  file, but SQLite on a network volume shared by replicas is not supported.
+- The request form keys its rate limit on the last `x-forwarded-for` entry (the hop Railway's proxy appends). If the app is ever
+  served without a proxy that sets that header, clients can choose their own key.
