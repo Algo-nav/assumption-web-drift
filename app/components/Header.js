@@ -5,10 +5,10 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="wrap bar">
-        <Link href="/" className="brand">
-          <span className="boldonse" style={{ fontSize: "var(--fs-m)", letterSpacing: "0.02em" }}>SCND ORDER</span>
-          <span className="mono small brand-product">{PRODUCT_NAME}</span>
-        </Link>
+        <div className="brand">
+          <a href="https://scndorder.com" className="brand-mark boldonse">SCND ORDER</a>
+          <Link href="/" className="mono small brand-product">{PRODUCT_NAME}</Link>
+        </div>
         <nav aria-label="Main" className="nav">
           <Link href="/">Companies</Link>
           <Link href="/misses">Misses</Link>

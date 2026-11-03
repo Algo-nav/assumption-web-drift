@@ -19,6 +19,9 @@ test.describe("pages load", () => {
       await expect(page.locator("h1").first()).toContainText(heading);
       await expect(page.locator("footer")).toContainText("CC-BY-4.0");
       await expect(page.locator("footer")).toContainText("SEC EDGAR");
+      await expect(page.locator("footer").getByRole("link", { name: "assumption-drift", exact: true }).last()).toHaveAttribute("href", /huggingface\.co\/datasets\/Nav772\/assumption-drift/);
+      // Every follow link is unset, so the column and its heading are left out entirely.
+      await expect(page.locator("footer").getByRole("heading", { name: "Follow" })).toHaveCount(0);
     });
   }
 
@@ -176,9 +179,9 @@ test.describe("about", () => {
   test("has the three links and the licence line", async ({ page }) => {
     await page.goto("/about");
     await expect(page.getByText("assumption-drift is a product of SCND Order, built by Navneet")).toBeVisible();
-    await expect(page.getByRole("link", { name: "dataset" })).toHaveAttribute("href", /huggingface\.co\/datasets\/Nav772\/assumption-drift/);
-    await expect(page.getByRole("link", { name: "Space" })).toHaveAttribute("href", /huggingface\.co\/spaces\/Nav772\/assumption-drift/);
-    await expect(page.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", /github\.com\/Algo-nav\/assumption-drift/);
+    await expect(page.locator("main").getByRole("link", { name: "dataset" })).toHaveAttribute("href", /huggingface\.co\/datasets\/Nav772\/assumption-drift/);
+    await expect(page.locator("main").getByRole("link", { name: "Space" })).toHaveAttribute("href", /huggingface\.co\/spaces\/Nav772\/assumption-drift/);
+    await expect(page.locator("main").getByRole("link", { name: "GitHub" })).toHaveAttribute("href", /github\.com\/Algo-nav\/assumption-drift/);
     await expect(page.locator("main")).toContainText("CC-BY-4.0");
   });
 });

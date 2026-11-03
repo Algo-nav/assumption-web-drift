@@ -266,6 +266,17 @@ summary:focus-visible {
   gap: var(--s1) var(--s2);
   text-decoration: none;
 }
+.brand a {
+  text-decoration: none;
+}
+.brand a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--ink);
+}
+.brand-mark {
+  font-size: var(--fs-m);
+  letter-spacing: 0.02em;
+}
 .brand-product {
   display: none;
   color: var(--faint);
@@ -308,6 +319,105 @@ summary:focus-visible {
     flex: 1;
     margin-left: var(--s2);
   }
+}
+
+/* Footer: four columns, a legal row, then the wordmark fitted to the full width as the last thing on the page. */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding-top: calc(var(--s6) + var(--s1));
+}
+.footer-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s4);
+}
+@media (min-width: 421px) {
+  .footer-cols {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 801px) {
+  .footer-cols {
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  }
+}
+.footer-h {
+  margin: 0 0 var(--s2);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  color: var(--faint);
+  letter-spacing: 0.02em;
+}
+.footer-cols a:not(.btn) {
+  display: block;
+  width: fit-content;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: 1.4;
+  margin: 0 0 var(--s2);
+}
+.footer-cols a:not(.btn):hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer-lead p {
+  margin: 0 0 var(--s2);
+  max-width: 45ch;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s3);
+  margin: calc(var(--s6) + var(--s2)) 0 var(--s3);
+}
+.footer-legal > a {
+  text-decoration: none;
+}
+.footer-legal > a:hover {
+  text-decoration: underline;
+}
+.footer-legal p {
+  margin: 0;
+  color: var(--faint);
+}
+.footer-copy {
+  color: var(--faint);
+  font-size: 12px;
+  margin-left: auto;
+}
+@media (max-width: 800px) {
+  .footer-legal {
+    gap: var(--s2);
+  }
+  .footer-legal p,
+  .footer-copy {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+.footer-mark {
+  /* Clip both ways. The glyphs sit inside the box (padding below), but Boldonse's font box runs about 0.36em
+     past the 1.2 line box; unclipped, that empty space adds blank scroll below the footer. clip, not hidden,
+     so this is never a scroll container. */
+  overflow: clip;
+  /* Boldonse caps stand 1.2em tall: a 1.2 line box, nudged down 0.04em, holds the cap tops and the baseline. */
+  line-height: 1.2;
+}
+.footer-mark-text {
+  display: block;
+  width: max-content;
+  white-space: nowrap;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  /* Close to the fitted size before the client fit runs, so the first paint does not overflow. */
+  font-size: 11vw;
+  transform: translateY(0.04em);
+  /* The ink ends 0.3px past the line box at 1280. Overshoot plus 8px, in the wordmark's own em, keeps the
+     glyph bottoms just above the end of the page at every fitted size. */
+  padding-bottom: 0.06em;
 }
 
 /* Hero and search */

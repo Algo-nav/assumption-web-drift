@@ -14,3 +14,7 @@ export const REQUESTS_PER_DAY = 50;
 // Request-form size limits. The body cap is checked while streaming; the field cap applies to every string field.
 export const MAX_REQUEST_BODY_BYTES = 4 * 1024;
 export const MAX_REQUEST_FIELD_CHARS = 200;
+
+// Footer follow links. Empty means not set up yet, and the footer leaves the link out.
+export const X_URL = "";
+export const LINKEDIN_URL = "";
