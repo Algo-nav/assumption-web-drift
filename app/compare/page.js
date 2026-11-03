@@ -1,5 +1,5 @@
 import { getAllRows, compareIndex, getCompanyRows } from "../lib/data";
-import { formatGuided, formatValue, describeRow } from "../lib/format";
+import { formatGuidedShort, formatValueShort, describeRow } from "../lib/format";
 import { chartGroups } from "../lib/chart";
 import { StatusBadge } from "../components/StatusBadge";
 import Excerpt from "../components/Excerpt";
@@ -32,11 +32,11 @@ function Side({ row, count, letter }) {
       <p style={{ margin: 0, color: "var(--ink)" }}>{describeRow(row)}</p>
       <dl className="facts">
         <dt>Guided</dt>
-        <dd>{formatGuided(row.low, row.high, row.unit)}</dd>
+        <dd className="figure">{formatGuidedShort(row.low, row.high, row.unit)}</dd>
         <dt>Stated</dt>
         <dd className="mono">{row.statedAt}</dd>
         <dt>Reported</dt>
-        <dd>{row.reported == null ? "none yet" : formatValue(row.reported, row.unit)}</dd>
+        <dd className={row.reported == null ? undefined : "figure"}>{row.reported == null ? "none yet" : formatValueShort(row.reported, row.unit)}</dd>
         <dt>Outcome date</dt>
         <dd className="mono">{row.reportedAt || "none"}</dd>
         <dt>Row</dt>

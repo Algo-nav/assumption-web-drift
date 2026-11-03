@@ -41,13 +41,42 @@
   --s4: 32px;
   --s6: 48px;
 
-  /* Four type sizes */
-  --fs-s: 0.8125rem;
-  --fs-m: 1rem;
+  /* Type scale, matched to scndorder.com: size, weight and line-height as the main site sets them. */
+  --fs-body: 16px;
+  --lh-body: 1.55;
+  --fs-nav: 14px;
+  --lh-nav: 20px;
+  --fs-mark: 14px;
+  --lh-mark: 20px;
+  --ls-mark: 0.025em;
+  /* The main site's hero title: the home page h1 only. */
+  --fs-h1: clamp(32px, 4.6vw, 66px);
+  --fw-h1: 600;
+  --lh-h1: 1.05;
+  /* Every other page's h1. */
+  --text-page-title: clamp(28px, 3.2vw, 44px);
+  --text-page-title-weight: 600;
+  --text-page-title-lh: 1.1;
+  --fs-h2: 18px;
+  --fw-h2: 600;
+  --lh-h2: 1.5;
+  --fs-small: 14px;
+  --lh-small: 20px;
+  --fs-foot-h: 13px;
+  --fw-foot-h: 500;
+  --lh-foot-h: 1.5;
+  --fs-foot-link: 16px;
+  --lh-foot-link: 1.4;
+  --lh-foot-lead: 1.45;
+  --fs-foot-cta: 15px;
+  --fs-foot-legal: 14px;
+  --fs-foot-copy: 12px;
+  /* Aspekta has no tabular figures, so figures and dates in tables are set in Plex Mono. */
+  --fs-num: 13px;
+  --fs-th: 13px;
+  /* Not on the main site's scale: the callout, stat figures and the search box keep their own sizes. */
   --fs-l: 1.25rem;
   --fs-xl: clamp(1.75rem, 1.4rem + 1.4vw, 2.25rem);
-  /* Home headline: 32px at 375, 48px at 1280. */
-  --fs-display: clamp(2rem, 1.585rem + 1.768vw, 3rem);
 }
 
 html {
@@ -59,9 +88,9 @@ body {
   margin: 0;
   background: var(--ground);
   color: var(--body);
-  font-family: var(--font-space-grotesk), system-ui, sans-serif;
-  font-size: var(--fs-m);
-  line-height: 1.5;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   overflow-x: clip;
 }
 
@@ -89,17 +118,22 @@ h3 {
   margin: 0;
 }
 h1 {
-  font-size: var(--fs-xl);
+  font-size: var(--text-page-title);
+  font-weight: var(--text-page-title-weight);
+  line-height: var(--text-page-title-lh);
 }
 h2 {
-  font-size: var(--fs-l);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-h2);
 }
 h3 {
-  font-size: var(--fs-m);
+  font-size: var(--fs-body);
 }
 
 .small {
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
 }
 .faint {
   color: var(--faint);
@@ -176,7 +210,7 @@ h3 {
 
 .label {
   display: block;
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   color: var(--faint);
   margin-bottom: var(--s1);
 }
@@ -274,12 +308,20 @@ summary:focus-visible {
   text-decoration-color: var(--ink);
 }
 .brand-mark {
-  font-size: var(--fs-m);
-  letter-spacing: 0.02em;
+  font-size: var(--fs-mark);
+  line-height: var(--lh-mark);
+  letter-spacing: var(--ls-mark);
 }
 .brand-product {
   display: none;
   color: var(--faint);
+  font-size: var(--fs-nav);
+  line-height: var(--lh-nav);
+}
+/* The header button is set at the main site's nav size. */
+.site-header .btn {
+  font-size: var(--fs-nav);
+  line-height: var(--lh-nav);
 }
 @media (min-width: 640px) {
   .brand-product {
@@ -294,6 +336,8 @@ summary:focus-visible {
   width: 100%;
 }
 .nav a {
+  font-size: var(--fs-nav);
+  line-height: var(--lh-nav);
   display: inline-flex;
   align-items: center;
   min-height: 40px;
@@ -343,8 +387,9 @@ summary:focus-visible {
 }
 .footer-h {
   margin: 0 0 var(--s2);
-  font-size: var(--fs-s);
-  font-weight: 500;
+  font-size: var(--fs-foot-h);
+  font-weight: var(--fw-foot-h);
+  line-height: var(--lh-foot-h);
   color: var(--faint);
   letter-spacing: 0.02em;
 }
@@ -353,7 +398,8 @@ summary:focus-visible {
   width: fit-content;
   color: var(--ink);
   text-decoration: none;
-  line-height: 1.4;
+  font-size: var(--fs-foot-link);
+  line-height: var(--lh-foot-link);
   margin: 0 0 var(--s2);
 }
 .footer-cols a:not(.btn):hover {
@@ -363,10 +409,15 @@ summary:focus-visible {
 .footer-lead p {
   margin: 0 0 var(--s2);
   max-width: 45ch;
-  line-height: 1.45;
+  font-size: var(--fs-body);
+  line-height: var(--lh-foot-lead);
   color: var(--ink);
 }
+.footer-lead .btn {
+  font-size: var(--fs-foot-cta);
+}
 .footer-legal {
+  font-size: var(--fs-foot-legal);
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -385,7 +436,7 @@ summary:focus-visible {
 }
 .footer-copy {
   color: var(--faint);
-  font-size: 12px;
+  font-size: var(--fs-foot-copy);
   margin-left: auto;
 }
 @media (max-width: 800px) {
@@ -425,9 +476,9 @@ summary:focus-visible {
   padding-top: var(--s2);
 }
 .hero h1 {
-  font-size: var(--fs-display);
-  line-height: 1.05;
-  letter-spacing: -0.015em;
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-h1);
+  line-height: var(--lh-h1);
   max-width: 18em;
   min-width: 0;
   overflow-wrap: break-word;
@@ -478,7 +529,7 @@ summary:focus-visible {
 }
 .tile span {
   display: block;
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   color: var(--body);
 }
 
@@ -521,7 +572,7 @@ summary:focus-visible {
   justify-content: space-between;
   gap: var(--s1);
   color: var(--faint);
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
 }
 .company-card .name {
   color: var(--ink);
@@ -552,7 +603,7 @@ summary:focus-visible {
   flex-wrap: wrap;
   gap: 0 var(--s2);
   margin-top: var(--s1);
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   color: var(--faint);
 }
 .dirbar-key i {
@@ -595,7 +646,7 @@ details.panel > summary::-webkit-details-marker {
 }
 details.panel > summary::after {
   content: "Show";
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   font-weight: 400;
   color: var(--faint);
 }
@@ -645,7 +696,7 @@ details.panel > .panel-body {
   line-height: 1.2;
 }
 .stat span {
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   color: var(--faint);
 }
 
@@ -673,7 +724,7 @@ details.panel > .panel-body {
   border-radius: 999px;
   background: var(--card);
   color: var(--ink);
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -696,10 +747,12 @@ table.data {
   border-collapse: collapse;
   width: 100%;
   min-width: 880px;
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
 }
 table.data th {
   text-align: left;
+  font-size: var(--fs-th);
+  line-height: var(--lh-small);
   font-weight: 500;
   color: var(--faint);
   padding: var(--s1) var(--s2) var(--s1) 0;
@@ -710,7 +763,7 @@ table.data td {
   padding: 4px var(--s2) 4px 0;
   border-bottom: 1px solid var(--line);
   vertical-align: middle;
-  line-height: 24px;
+  line-height: var(--lh-body);
 }
 table.data tbody tr:hover td {
   background: var(--row-hover);
@@ -718,6 +771,17 @@ table.data tbody tr:hover td {
 table.data .num {
   text-align: right;
   white-space: nowrap;
+}
+/* Table figures use the compact form ("$105.84B", "-$0.04/sh") and never wrap. */
+table.data td.num {
+  white-space: nowrap;
+}
+/* Figures and dates in tables: Plex Mono, so the digits line up. Headers stay in Aspekta. */
+table.data td.num,
+table.data td.mono,
+.figure {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: var(--fs-num);
 }
 table.data td.nowrap {
   white-space: nowrap;
@@ -729,7 +793,7 @@ table.data td.nowrap {
   padding: 0 var(--s1);
   border: 1px solid var(--line);
   border-radius: 999px;
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   line-height: 24px;
   color: var(--ink);
   white-space: nowrap;
@@ -806,7 +870,7 @@ dl.facts {
 }
 dl.facts dt {
   color: var(--faint);
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
 }
 dl.facts dd {
   margin: 0;
@@ -1028,7 +1092,7 @@ dl.facts dd {
   display: flex;
   flex-wrap: wrap;
   gap: 0 var(--s2);
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
   color: var(--faint);
 }
 .chart-key i {
@@ -1071,7 +1135,7 @@ dl.facts dd {
   max-width: 100%;
   border-collapse: collapse;
   margin: 0 0 var(--s2);
-  font-size: var(--fs-s);
+  font-size: var(--fs-small);
 }
 .prose th,
 .prose td {
@@ -1131,7 +1195,10 @@ details.year > .table-scroll {
 }
 table.data {
   table-layout: fixed;
-  min-width: 1002px;
+  /* The column widths in app/company/[ticker]/page.js, summed: each column fits its widest one-line content
+     except Metric, which may cut a long name short (the cell carries it as its title). 972px is the year
+     group's content width at 1280. */
+  min-width: 972px;
 }
 table.data th,
 table.data td {
@@ -1146,7 +1213,9 @@ table.data td {
 }
 
 table.data.misses {
-  min-width: 1000px;
+  /* The column widths in app/misses/page.js, summed. Company and Metric may cut a long name short; both
+     cells carry the full name as their title. */
+  min-width: 1004px;
 }
 table.data th .sort {
   color: var(--faint);
@@ -1167,11 +1236,13 @@ a[href*="sec.gov"] {
   white-space: nowrap;
 }
 
-/* Scrolling tables on narrow screens: a one-line hint above, and a soft fade at the right edge that
-   closes as the table reaches its end. */
+/* Scrolling tables: a one-line hint above, and a soft fade at the right edge that closes as the table
+   reaches its end. TableScroll shows both only while the table is wider than its box. */
 .scroll-hint {
-  display: none;
   margin: 0 0 var(--s1);
+}
+.scroll-hint[hidden] {
+  display: none;
 }
 @property --edge {
   syntax: "<length>";
@@ -1187,18 +1258,13 @@ a[href*="sec.gov"] {
     --edge: 0px;
   }
 }
-@media (max-width: 767px) {
-  .scroll-hint {
-    display: block;
-  }
-  .table-scroll {
-    mask-image: linear-gradient(to right, var(--ink) calc(100% - var(--edge)), transparent);
-  }
-  @supports (animation-timeline: scroll(self x)) {
-    .table-scroll {
-      animation: edge-out linear both;
-      animation-timeline: scroll(self x);
-    }
+.table-scroll[data-overflows] {
+  mask-image: linear-gradient(to right, var(--ink) calc(100% - var(--edge)), transparent);
+}
+@supports (animation-timeline: scroll(self x)) {
+  .table-scroll[data-overflows] {
+    animation: edge-out linear both;
+    animation-timeline: scroll(self x);
   }
 }
 @media (prefers-reduced-motion: reduce) {

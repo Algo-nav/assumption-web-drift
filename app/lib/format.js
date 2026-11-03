@@ -104,3 +104,31 @@ export function formatBy(n, unit) {
   if (n == null) return "";
   return unit === "percent" ? `${num(n)} points` : one(n, unit);
 }
+
+// Compact forms for table cells only: "$105.84B to $110.16B", "$500M", "-$0.04 to -$0.03/sh". Points, bps and
+// percentages are unchanged. The row page, the home page, stat tiles and every excerpt keep the long forms above.
+const SHORT = { "USD billions": "B", "USD millions": "M" };
+
+function oneShort(n, unit) {
+  if (SHORT[unit]) return money(n, SHORT[unit]);
+  if (unit === "USD per share") return money(n, "/sh");
+  return one(n, unit);
+}
+
+export function formatValueShort(n, unit) {
+  return n == null ? "none" : oneShort(n, unit);
+}
+
+export function formatGuidedShort(low, high, unit) {
+  if (low != null && high == null) return `at least ${oneShort(low, unit)}`;
+  if (low == null && high != null) return `at most ${oneShort(high, unit)}`;
+  if (low === high) return oneShort(low, unit);
+  // Billions and millions carry their letter on both ends; per share is written once, at the end.
+  if (SHORT[unit]) return `${oneShort(low, unit)} to ${oneShort(high, unit)}`;
+  return `${bare(low, unit)} to ${bare(high, unit)}${unit === "USD per share" ? "/sh" : TAIL[unit] || ""}`;
+}
+
+export function formatByShort(n, unit) {
+  if (n == null) return "";
+  return unit === "percent" ? `${num(n)} points` : oneShort(n, unit);
+}

@@ -213,8 +213,9 @@ test.describe("5. /misses", () => {
 
   test("the By column shows the distance in the metric's unit, and percent metrics sort by points", async ({ page }) => {
     // UNH FY2020 revenue: guided $260 to $262 billion, reported $257.1 billion, so $2.9 billion short.
+    // Table cells use the compact form.
     await page.goto("/misses?company=UNH&metric=revenue");
-    await expect(page.locator("tr[data-row]", { hasText: "FY2020" }).first()).toContainText("$2.9 billion");
+    await expect(page.locator("tr[data-row]", { hasText: "FY2020" }).first()).toContainText("$2.9B");
 
     // Walmart FY2023 tax rate: guided 25% to 26%, reported 33.6%, so 7.6 points over.
     await page.goto("/misses?company=WMT&metric=tax%20rate");

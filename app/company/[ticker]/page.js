@@ -1,7 +1,8 @@
 import Link from "next/link";
+import TableScroll from "../../components/TableScroll";
 import { notFound } from "next/navigation";
 import { getCompanyRows, getSector, shortName, summarise, uniqueSorted } from "../../lib/data";
-import { formatGuided, formatValue } from "../../lib/format";
+import { formatGuidedShort, formatValueShort } from "../../lib/format";
 import { chartGroups } from "../../lib/chart";
 import { StatusBadge, DirectionText } from "../../components/StatusBadge";
 import DirectionBar from "../../components/DirectionBar";
@@ -163,11 +164,10 @@ export default async function CompanyPage({ params, searchParams }) {
                   <span className="year-name">{year === "none" ? "Other" : `FY${year}`}</span>
                   <span className="small faint">{list.length} row{list.length === 1 ? "" : "s"}</span>
                 </summary>
-                <p className="scroll-hint small faint">Scroll sideways for more columns</p>
-                <div className="table-scroll">
+                <TableScroll>
                   <table className="data">
                     <colgroup>
-                      {[136, 72, 80, 180, 88, 112, 88, 84, 64, 98].map((w, k) => <col key={k} style={{ width: w }} />)}
+                      {[132, 77, 79, 164, 86, 79, 94, 98, 63, 100].map((w, k) => <col key={k} style={{ width: w }} />)}
                     </colgroup>
                     <thead>
                       <tr>
@@ -186,12 +186,12 @@ export default async function CompanyPage({ params, searchParams }) {
                     <tbody>
                       {list.map((r) => (
                         <tr key={r.id} data-row>
-                          <td className="nowrap"><Link href={`/row/${r.id}`}>{r.metricBase}</Link></td>
+                          <td className="nowrap" title={r.metricBase}><Link href={`/row/${r.id}`}>{r.metricBase}</Link></td>
                           <td className="nowrap">{r.basis}</td>
                           <td className="nowrap mono">{r.period}</td>
-                          <td className="num">{formatGuided(r.low, r.high, r.unit)}</td>
+                          <td className="num">{formatGuidedShort(r.low, r.high, r.unit)}</td>
                           <td className="nowrap mono">{r.statedAt}</td>
-                          <td className="num">{r.reported == null ? <span className="faint">none yet</span> : formatValue(r.reported, r.unit)}</td>
+                          <td className="num">{r.reported == null ? <span className="faint">none yet</span> : formatValueShort(r.reported, r.unit)}</td>
                           <td className="nowrap mono">{r.reportedAt || ""}</td>
                           <td><StatusBadge status={r.status} direction={r.direction} /></td>
                           <td><DirectionText direction={r.direction} /></td>
@@ -200,7 +200,7 @@ export default async function CompanyPage({ params, searchParams }) {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </TableScroll>
               </details>
             ))}
           </div>

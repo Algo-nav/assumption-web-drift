@@ -1,4 +1,5 @@
-import { Boldonse, Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import { Boldonse, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { connection } from "next/server";
 import "./globals.css";
 import Header from "./components/Header";
@@ -11,10 +12,14 @@ const boldonse = Boldonse({
   weight: "400",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// Aspekta 2.100, self-hosted (variable, wght 100-900), loaded as on scndorder.com. Source: github.com/ivodolenc/aspekta,
+// OFL 1.1 licence alongside the file.
+const aspekta = localFont({
+  src: "./fonts/aspekta/AspektaVF.woff2",
+  variable: "--font-sans",
+  weight: "100 900",
+  style: "normal",
+  display: "swap",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -37,7 +42,7 @@ export default async function RootLayout({ children }) {
   // Render per request so Next can stamp the CSP nonce from proxy.js on its scripts (static pages have no request).
   await connection();
   return (
-    <html lang="en" className={`${boldonse.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable}`}>
+    <html lang="en" className={`${boldonse.variable} ${aspekta.variable} ${ibmPlexMono.variable}`}>
       <body>
         <Header />
         <main className="wrap page">

@@ -1,6 +1,7 @@
 import Link from "next/link";
+import TableScroll from "../components/TableScroll";
 import { getAllRows, uniqueSorted, shortName } from "../lib/data";
-import { formatGuided, formatValue, formatBy } from "../lib/format";
+import { formatGuidedShort, formatValueShort, formatBy, formatByShort } from "../lib/format";
 
 export const metadata = { title: "Misses" };
 
@@ -113,11 +114,10 @@ export default async function MissesPage({ searchParams }) {
           </div>
         ) : (
           <>
-          <p className="scroll-hint small faint">Scroll sideways for more columns</p>
-          <div className="table-scroll">
+          <TableScroll>
             <table className="data misses">
               <colgroup>
-                {[100, 136, 92, 150, 104, 100, 124, 88, 106].map((w, k) => <col key={k} style={{ width: w }} />)}
+                {[138, 165, 79, 157, 79, 94, 106, 86, 100].map((w, k) => <col key={k} style={{ width: w }} />)}
               </colgroup>
               <thead>
                 <tr>
@@ -146,10 +146,10 @@ export default async function MissesPage({ searchParams }) {
                     <td className="nowrap" title={r.company}>{shortName(r.company)}</td>
                     <td className="nowrap" title={r.metric}><Link href={`/row/${r.id}`}>{r.metric}</Link></td>
                     <td className="nowrap mono">{r.period}</td>
-                    <td className="num">{formatGuided(r.low, r.high, r.unit)}</td>
-                    <td className="num">{formatValue(r.reported, r.unit)}</td>
+                    <td className="num">{formatGuidedShort(r.low, r.high, r.unit)}</td>
+                    <td className="num">{formatValueShort(r.reported, r.unit)}</td>
                     <td className="num" data-by={r.beyondBase ?? ""} title={formatBy(r.beyondAbs, r.unit)}>
-                      {r.beyondAbs == null ? <span className="faint">n/a</span> : formatBy(r.beyondAbs, r.unit)}
+                      {r.beyondAbs == null ? <span className="faint">n/a</span> : formatByShort(r.beyondAbs, r.unit)}
                     </td>
                     <td className={`num${side === "worse" ? " text-worse" : ""}`} data-pct={r.beyondPct ?? ""}>
                       {r.beyondPct == null ? <span className="faint">n/a</span> : `${r.beyondPct.toFixed(1)}%`}
@@ -160,7 +160,7 @@ export default async function MissesPage({ searchParams }) {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           </>
         )}
         {sort === "by" && !metric && rows.length > 0 ? (
