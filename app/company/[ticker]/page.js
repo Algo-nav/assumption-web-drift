@@ -3,10 +3,12 @@ import TableScroll from "../../components/TableScroll";
 import { notFound } from "next/navigation";
 import { getCompanyRows, getSector, shortName, summarise, uniqueSorted } from "../../lib/data";
 import { formatGuidedShort, formatValueShort } from "../../lib/format";
-import { chartGroups } from "../../lib/chart";
+import { chartGroups, xDomain, gutterChars } from "../../lib/chart";
 import { StatusBadge, DirectionText } from "../../components/StatusBadge";
 import DirectionBar from "../../components/DirectionBar";
 import Chart, { ChartKey } from "../../components/Chart";
+import Logo, { LOGO_PAGE } from "../../components/Logo";
+import { logoRatio } from "../../lib/logos";
 
 export async function generateMetadata({ params }) {
   const { ticker } = await params;
@@ -81,6 +83,9 @@ export default async function CompanyPage({ params, searchParams }) {
     .sort((a, b) => b.resolved - a.resolved || a.title.localeCompare(b.title));
   const shownCharts = groups.slice(0, VISIBLE_CHARTS);
   const moreCharts = groups.slice(VISIBLE_CHARTS);
+  // One time range for every chart of this company, so the fiscal-year ticks line up across them.
+  const chartX = groups.length ? xDomain(groups) : null;
+  const gutter = groups.length ? gutterChars(groups) : null;
 
   const summary = [
     `${short} guided ${s.rows} times since ${since}.`,
@@ -92,7 +97,15 @@ export default async function CompanyPage({ params, searchParams }) {
     <div className="stack">
       <section>
         <p className="small" style={{ margin: "0 0 var(--s1)" }}><Link href="/">All companies</Link></p>
-        <h1>{name}</h1>
+        <div className="company-head">
+          <div className="company-title">
+            <Logo ticker={tk} ratio={logoRatio(tk)} max={LOGO_PAGE} />
+            <h1>{name}</h1>
+          </div>
+          <Link href={`/compare?t=${encodeURIComponent(tk)}`} className="btn" data-testid="compare-with">
+            Compare with…
+          </Link>
+        </div>
         <p className="small faint" style={{ margin: "var(--s1) 0 0" }}>
           <span className="mono">{tk}</span>
           {sector ? <> &middot; {sector}</> : null}
@@ -110,14 +123,14 @@ export default async function CompanyPage({ params, searchParams }) {
           </div>
           <ChartKey />
           <div className="charts" data-testid="charts">
-            {shownCharts.map((g) => <Chart key={g.key} group={g} />)}
+            {shownCharts.map((g) => <Chart key={g.key} group={g} x={chartX} gutter={gutter} />)}
           </div>
           {moreCharts.length > 0 ? (
             <details className="panel">
               <summary>{moreCharts.length} more chart{moreCharts.length === 1 ? "" : "s"}</summary>
               <div className="panel-body">
                 <div className="charts" style={{ marginTop: "var(--s2)" }}>
-                  {moreCharts.map((g) => <Chart key={g.key} group={g} />)}
+                  {moreCharts.map((g) => <Chart key={g.key} group={g} x={chartX} gutter={gutter} />)}
                 </div>
               </div>
             </details>

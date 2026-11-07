@@ -5,6 +5,7 @@ import CompanyFinder from "./components/CompanyFinder";
 import RequestForm from "./components/RequestForm";
 import Excerpt from "./components/Excerpt";
 import { StatusBadge } from "./components/StatusBadge";
+import { logoRatio } from "./lib/logos";
 
 // The worked example for "How to read a row": a real acknowledged row, the one with the shortest quotes.
 function exampleRow(rows) {
@@ -17,7 +18,7 @@ function exampleRow(rows) {
 export default function Home() {
   const rows = getAllRows();
   const s = summarise(rows);
-  const companies = getCompanies();
+  const companies = getCompanies().map((c) => ({ ...c, logo: logoRatio(c.ticker) }));
   const fmt = (n) => n.toLocaleString("en-US");
 
   const worseNever = rows.filter((r) => r.status === "missed" && r.direction === "worse" && !r.acknowledged).length;

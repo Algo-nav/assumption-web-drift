@@ -6,6 +6,11 @@ export const DATASET_URL = "https://huggingface.co/datasets/Nav772/assumption-dr
 export const SPACE_URL = "https://huggingface.co/spaces/Nav772/assumption-drift";
 export const GITHUB_URL = "https://github.com/Algo-nav/assumption-drift";
 
+// Company pages live on the main site.
+export const MAIN_URL = "https://scndorder.com";
+export const ABOUT_URL = "https://scndorder.com/about";
+export const CONTACT_URL = "https://scndorder.com/contact";
+
 export const REQUEST_ROLES = ["Analyst", "PM", "Director of research", "CIO", "Other"];
 
 export const REQUESTS_PER_IP_PER_HOUR = 5;

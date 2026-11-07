@@ -1,4 +1,5 @@
 import { formatGuided, formatValue } from "./format.js";
+import { fiscalYearEnd } from "./data/fiscal.js";
 
 // Turns a company's rows into chart groups: one group per metric, period length and unit family.
 // Money is put on one scale so a millions row and a billions row of the same metric share an axis.
@@ -24,7 +25,7 @@ export function chartGroups(rows) {
     const kind = /^Q\d/.test(r.period) ? "quarterly" : "annual";
     const key = `${r.metric}|${kind}|${family(r.unit)}`;
     if (!groups.has(key)) {
-      groups.set(key, { key, metric: r.metric, metricBase: r.metricBase, basis: r.basis, kind, family: family(r.unit), points: [] });
+      groups.set(key, { key, ticker: r.ticker, metric: r.metric, metricBase: r.metricBase, basis: r.basis, kind, family: family(r.unit), points: [] });
     }
     groups.get(key).points.push({
       id: r.id,
@@ -59,14 +60,21 @@ function formatLine(r) {
   return `${formatGuided(r.low, r.high, r.unit)} (${r.statedAt}), ${rep}${r.status ? `, ${r.status}` : ""}${r.direction ? `, ${r.direction}` : ""}`;
 }
 
-export function niceTicks(min, max, n = 4) {
+// Round tick values inside [min, max], three to five of them: steps of 1, 2, 2.5 or 5 times a power of ten,
+// preferring four ticks, then five, then three.
+export function niceTicks(min, max) {
   const span = max - min || Math.abs(max) || 1;
-  const raw = span / n;
-  const pow = 10 ** Math.floor(Math.log10(raw));
-  const step = [1, 2, 2.5, 5, 10].map((m) => m * pow).find((s) => s >= raw) || pow * 10;
-  const out = [];
-  for (let v = Math.ceil(min / step) * step; v <= max + step * 1e-9; v += step) out.push(Number(v.toPrecision(12)));
-  return out;
+  const tries = [];
+  for (let k = Math.floor(Math.log10(span)) - 2; k <= Math.floor(Math.log10(span)) + 1; k++) {
+    for (const m of [1, 2, 2.5, 5]) {
+      const step = m * 10 ** k;
+      const out = [];
+      for (let v = Math.ceil(min / step - 1e-9) * step; v <= max + step * 1e-9; v += step) out.push(Number(v.toPrecision(12)));
+      tries.push(out);
+    }
+  }
+  const rank = (n) => (n === 4 ? 0 : n === 5 ? 1 : n === 3 ? 2 : 3 + Math.abs(n - 4));
+  return tries.sort((a, b) => rank(a.length) - rank(b.length))[0];
 }
 
 export function formatTick(v, fam) {
@@ -93,16 +101,97 @@ export function scaleFor(group) {
   return min > 0 && max / min > 10 ? "log" : "linear";
 }
 
-// Ticks at 1, 2 and 5 times each power of ten, thinned to about `n` when the range is wide.
-export function logTicks(min, max, n = 5) {
-  const all = [];
-  for (let k = Math.floor(Math.log10(min)); k <= Math.ceil(Math.log10(max)); k++) {
-    for (const m of [1, 2, 5]) {
-      const v = m * 10 ** k;
-      if (v >= min && v <= max) all.push(v);
+// Log-axis ticks inside [min, max]: the coarsest of decades, 1-3, 1-2-5 or 1-2-3-5 per decade that gives three to
+// five ticks, or the nearest to four if none does.
+export function logTicks(min, max) {
+  const sets = [[1], [1, 3], [1, 2, 5], [1, 2, 3, 5]];
+  const tries = sets.map((ms) => {
+    const out = [];
+    for (let k = Math.floor(Math.log10(min)); k <= Math.ceil(Math.log10(max)); k++) {
+      for (const m of ms) {
+        const v = Number((m * 10 ** k).toPrecision(12));
+        if (v >= min * (1 - 1e-9) && v <= max * (1 + 1e-9)) out.push(v);
+      }
     }
+    return out;
+  });
+  const ok = tries.find((t) => t.length >= 3 && t.length <= 5);
+  return ok || tries.sort((a, b) => Math.abs(a.length - 4) - Math.abs(b.length - 4))[0];
+}
+
+function quantile(sorted, q) {
+  const i = (sorted.length - 1) * q;
+  const lo = Math.floor(i);
+  return sorted[lo] + (sorted[Math.ceil(i)] - sorted[lo]) * (i - lo);
+}
+
+// The y range to plot, in axis units (log10 for a log axis). The median cluster is the middle 80% of the plotted
+// values (10th to 90th percentile). When showing every value would squeeze that cluster into less than half the
+// plot height, the range is cut so the cluster fills just over half, and the spare room goes to the sides where
+// the outliers lie. Values outside the range are drawn at the plot edge by the chart.
+export function yDomain(values) {
+  const v = [...values].sort((a, b) => a - b);
+  let lo = v[0];
+  let hi = v[v.length - 1];
+  const c0 = quantile(v, 0.1);
+  const c1 = quantile(v, 0.9);
+  const cs = c1 - c0;
+  // Padding of 3% a side is added below, so the cluster must fill 0.5 * 1.06 of the unpadded range.
+  if (cs > 0 && cs / ((hi - lo) * 1.06) < 0.5) {
+    const room = cs * (1 / 0.53 - 1) * 0.999;
+    const needLo = c0 - lo;
+    const needHi = hi - c1;
+    let takeLo = Math.min(needLo, (room * needLo) / (needLo + needHi));
+    let takeHi = Math.min(needHi, room - takeLo);
+    takeLo = Math.min(needLo, room - takeHi);
+    lo = c0 - takeLo;
+    hi = c1 + takeHi;
   }
-  const decades = all.filter((v) => Math.abs(Math.log10(v) - Math.round(Math.log10(v))) < 1e-9);
-  if (all.length <= n + 2) return all;
-  return decades.length >= 2 ? decades : all.filter((_, i) => i % Math.ceil(all.length / n) === 0);
+  if (lo === hi) {
+    const pad = Math.abs(lo) * 0.1 || 1;
+    lo -= pad;
+    hi += pad;
+  }
+  const pad = (hi - lo) * 0.03;
+  return { lo: lo - pad, hi: hi + pad };
+}
+
+// The time range of a set of chart groups, padded, so every chart of one company can share it.
+export function xDomain(groups) {
+  const xs = groups.flatMap((g) => g.points.flatMap((p) => [p.x0, ...(p.x1 == null ? [] : [p.x1])]));
+  const x0 = Math.min(...xs);
+  const x1 = Math.max(...xs);
+  const pad = Math.max((x1 - x0) * 0.02, 15 * 86400000);
+  return [x0 - pad, x1 + pad];
+}
+
+// One tick per fiscal year: a boundary at each year end inside [x0, x1], and the year's label centred on the part
+// of the year that is in range.
+export function fiscalTicks(ticker, x0, x1) {
+  const y0 = new Date(x0).getUTCFullYear() - 2;
+  const y1 = new Date(x1).getUTCFullYear() + 2;
+  const years = [];
+  for (let fy = y0; fy <= y1; fy++) {
+    const start = fiscalYearEnd(ticker, fy - 1);
+    const end = fiscalYearEnd(ticker, fy);
+    if (end <= x0 || start >= x1) continue;
+    years.push({ fy, start: Math.max(start, x0), end: Math.min(end, x1), boundary: end < x1 ? end : null });
+  }
+  return years;
+}
+
+// Everything the y axis of one chart needs: the scale, the plotted range (axis units), the ticks and their labels.
+// Unresolved statements have no reported figure on the chart, so only their guided range counts.
+export const plotsReported = (p) => p.rep != null && p.x1 != null && p.status !== "unresolved";
+export function yAxis(group) {
+  const scale = scaleFor(group);
+  const T = scale === "log" ? Math.log10 : (v) => v;
+  const dom = yDomain(group.points.flatMap((p) => [p.lo, p.hi, ...(plotsReported(p) ? [p.rep] : [])]).map(T));
+  const ticks = scale === "log" ? logTicks(10 ** dom.lo, 10 ** dom.hi) : niceTicks(dom.lo, dom.hi);
+  return { scale, T, dom, ticks, labels: ticks.map((v) => formatTick(v, group.family)) };
+}
+
+// The widest tick label, in characters, across a set of charts, so they can share one left gutter.
+export function gutterChars(groups) {
+  return Math.max(...groups.map((g) => Math.max(...yAxis(g).labels.map((s) => s.length))));
 }

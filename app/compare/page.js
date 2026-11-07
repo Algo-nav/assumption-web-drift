@@ -111,7 +111,7 @@ export default async function ComparePage({ searchParams }) {
         <div className="card empty">
           <h2>Nothing to compare yet</h2>
           <p style={{ margin: 0 }}>
-            {t || m || a || b
+            {m || a || b
               ? "That combination has no statements. Pick a period from the lists above and press Compare."
               : "Choose a company, a metric and two periods above, then press Compare."}
           </p>

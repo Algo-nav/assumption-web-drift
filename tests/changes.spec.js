@@ -57,7 +57,8 @@ test.describe("2. charts", () => {
     await page.goto("/company/NVDA?metric=revenue");
     const chart = page.locator('[data-chart][data-metric^="revenue"]').first();
     await expect(chart).toHaveAttribute("data-scale", "log");
-    await expect(chart.locator("svg")).toContainText("log scale");
+    // The note shares the title line, outside the SVG.
+    await expect(chart.locator(".chart-head .chart-note")).toContainText("log scale");
     expect(await chart.locator("svg").getAttribute("viewBox")).toBe("0 0 520 480");
 
     const sizes = async () =>

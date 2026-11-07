@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const PATHS = ["/", "/company/NVDA", "/methodology", "/about", "/does-not-exist", "/apiary", "/api-docs"];
+const PATHS = ["/", "/company/NVDA", "/methodology", "/misses", "/does-not-exist", "/apiary", "/api-docs"];
 
 const parse = (csp) =>
   Object.fromEntries(
@@ -37,7 +37,7 @@ test("a page carries exactly one CSP header (a second one would be intersected a
 test("the nonce is fresh per request and is the one on the page's own scripts", async ({ request }) => {
   const nonces = [];
   for (let i = 0; i < 2; i++) {
-    const res = await request.get("/about");
+    const res = await request.get("/methodology");
     const nonce = res.headers()["content-security-policy"].match(/'nonce-([^']+)'/)[1];
     const html = await res.text();
     expect(html).toContain(`nonce="${nonce}"`);
@@ -69,7 +69,7 @@ test("the policy does not block the app's own scripts, and pages still hydrate",
     if (/content security policy/i.test(m.text())) violations.push(m.text());
   });
   page.on("pageerror", (e) => violations.push(String(e)));
-  for (const p of ["/", "/company/NVDA", "/compare", "/misses", "/methodology", "/about"]) {
+  for (const p of ["/", "/company/NVDA", "/compare", "/misses", "/methodology"]) {
     await page.goto(p);
     await page.waitForLoadState("networkidle");
   }
@@ -95,7 +95,7 @@ test("an inline script and an inline handler without the nonce do not run", asyn
   page.on("console", (m) => {
     if (/content security policy/i.test(m.text())) violations.push(m.text());
   });
-  await page.route("**/about", async (route) => {
+  await page.route("**/methodology", async (route) => {
     const response = await route.fetch();
     const body = (await response.text()).replace(
       "</body>",
@@ -103,7 +103,7 @@ test("an inline script and an inline handler without the nonce do not run", asyn
     );
     await route.fulfill({ response, body });
   });
-  await page.goto("/about");
+  await page.goto("/methodology");
   await page.waitForLoadState("networkidle");
   expect(await page.evaluate(() => window.__injected)).toBeUndefined();
   expect(violations.length).toBeGreaterThan(0);
@@ -115,12 +115,12 @@ test("an injected <base> to another origin is ignored", async ({ page }) => {
   page.on("console", (m) => {
     if (/content security policy/i.test(m.text())) violations.push(m.text());
   });
-  await page.route("**/about", async (route) => {
+  await page.route("**/methodology", async (route) => {
     const response = await route.fetch();
     const body = (await response.text()).replace("<head>", '<head><base href="https://evil.invalid/">');
     await route.fulfill({ response, body });
   });
-  await page.goto("/about");
+  await page.goto("/methodology");
   await page.waitForLoadState("networkidle");
   const baseURI = await page.evaluate(() => document.baseURI);
   expect(new URL(baseURI).origin).toBe(new URL(page.url()).origin);
@@ -135,7 +135,7 @@ test("a form that posts to another origin is blocked", async ({ page }) => {
     if (/content security policy/i.test(m.text())) violations.push(m.text());
   });
   page.on("request", (r) => requested.push(r.url()));
-  await page.goto("/about");
+  await page.goto("/methodology");
   await page.evaluate(() => {
     const f = document.createElement("form");
     f.method = "post";
@@ -146,6 +146,6 @@ test("a form that posts to another origin is blocked", async ({ page }) => {
   });
   await page.waitForTimeout(500);
   expect(violations.some((v) => /form-action/.test(v))).toBe(true);
-  expect(new URL(page.url()).pathname).toBe("/about");
+  expect(new URL(page.url()).pathname).toBe("/methodology");
   expect(requested.some((u) => u.includes("evil.invalid"))).toBe(false);
 });

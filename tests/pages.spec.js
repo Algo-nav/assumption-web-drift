@@ -11,15 +11,17 @@ test.describe("pages load", () => {
     [`/row/${resolved.record_id}`, /./],
     ["/compare", /Compare two periods/],
     ["/methodology", /What 15 companies guided/],
-    ["/about", /About/],
   ]) {
     test(`${url} loads with footer`, async ({ page }) => {
       const res = await page.goto(url);
       expect(res.status()).toBe(200);
       await expect(page.locator("h1").first()).toContainText(heading);
-      await expect(page.locator("footer")).toContainText("CC-BY-4.0");
-      await expect(page.locator("footer")).toContainText("SEC EDGAR");
-      await expect(page.locator("footer").getByRole("link", { name: "assumption-drift", exact: true }).last()).toHaveAttribute("href", /huggingface\.co\/datasets\/Nav772\/assumption-drift/);
+      // The legal row is Privacy, Terms and the copyright; the dataset and EDGAR lines live in /methodology#provenance.
+      const legal = page.locator("footer .footer-legal");
+      await expect(legal.getByRole("link")).toHaveText(["Privacy", "Terms"]);
+      await expect(legal).toContainText("©");
+      await expect(page.locator("footer")).not.toContainText("CC-BY-4.0");
+      await expect(page.locator("footer")).not.toContainText("SEC EDGAR");
       // Every follow link is unset, so the column and its heading are left out entirely.
       await expect(page.locator("footer").getByRole("heading", { name: "Follow" })).toHaveCount(0);
     });
@@ -175,13 +177,28 @@ test.describe("methodology", () => {
   });
 });
 
-test.describe("about", () => {
-  test("has the three links and the licence line", async ({ page }) => {
+test.describe("provenance (the pilot's /about page, moved)", () => {
+  test("/about redirects permanently to /methodology#provenance", async ({ request, page }) => {
+    const res = await request.get("/about", { maxRedirects: 0 });
+    expect(res.status()).toBe(308);
+    expect(res.headers()["location"]).toBe("/methodology#provenance");
     await page.goto("/about");
-    await expect(page.getByText("assumption-drift is a product of SCND Order, built by Navneet")).toBeVisible();
-    await expect(page.locator("main").getByRole("link", { name: "dataset" })).toHaveAttribute("href", /huggingface\.co\/datasets\/Nav772\/assumption-drift/);
-    await expect(page.locator("main").getByRole("link", { name: "Space" })).toHaveAttribute("href", /huggingface\.co\/spaces\/Nav772\/assumption-drift/);
-    await expect(page.locator("main").getByRole("link", { name: "GitHub" })).toHaveAttribute("href", /github\.com\/Algo-nav\/assumption-drift/);
-    await expect(page.locator("main")).toContainText("CC-BY-4.0");
+    expect(new URL(page.url()).pathname + new URL(page.url()).hash).toBe("/methodology#provenance");
+    await expect(page.locator("#provenance")).toBeInViewport();
+  });
+
+  test("sits at the end of the methodology with authorship, links, licence and source", async ({ page }) => {
+    await page.goto("/methodology");
+    const p = page.locator("main > .stack > :last-child");
+    await expect(p).toHaveAttribute("id", "provenance");
+    await expect(p.getByRole("heading", { name: "Provenance" })).toBeVisible();
+    await expect(p.getByText("assumption-drift is a product of SCND Order, built by Navneet")).toBeVisible();
+    await expect(p.getByRole("link", { name: "dataset" })).toHaveAttribute("href", /huggingface\.co\/datasets\/Nav772\/assumption-drift/);
+    await expect(p.getByRole("link", { name: "Space" })).toHaveAttribute("href", /huggingface\.co\/spaces\/Nav772\/assumption-drift/);
+    await expect(p.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", /github\.com\/Algo-nav\/assumption-drift/);
+    await expect(p.getByRole("link", { name: "assumption-drift", exact: true })).toHaveAttribute("href", /huggingface\.co\/datasets\/Nav772\/assumption-drift/);
+    await expect(p).toContainText("licensed CC-BY-4.0");
+    await expect(p.getByRole("link", { name: "SEC EDGAR" })).toHaveAttribute("href", "https://www.sec.gov/edgar");
+    await expect(p).toContainText("Each row links to the filing it came from.");
   });
 });

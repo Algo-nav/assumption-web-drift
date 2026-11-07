@@ -1,0 +1,53 @@
+render tier: 35 screenshots in /Users/macintoshhd/Desktop/Renaissance/assumption-web-drift/.hallmark/shots (1280x800, 1440x900, 1920x1080 folds; 1440 and 375 full pages)
+app/globals.css
+  WAIVED 7b :208 pure #fff: background: var(--card) (.card)
+  WAIVED 7b :234 pure #fff: background: var(--card) (.input)
+  WAIVED 7b :519 pure #fff: background: var(--card) (.tile)
+  WAIVED 7b :570 pure #fff: background: var(--card) (.company-card)
+  WAIVED 7b :692 pure #fff: background: var(--card) (.stat)
+  WAIVED 7b :735 pure #fff: background: var(--card) (.pill)
+  WAIVED 7b :943 pure #fff: background: var(--card) (.row-nav a)
+  WAIVED 7b :998 pure #fff: background: var(--card) (.chart)
+  WAIVED 7b :1079 pure #fff: background: var(--card) (.chart-key .key-open)
+  WAIVED 7b :1406 pure #fff: background: var(--card) (.logo-mono)
+http://localhost:3000/methodology
+  WAIVED 49b :1 [320px] link "github.com/Algo-nav/assumption-d" wraps to 2 lines (a)
+  NOTE 44c :1 [1440px] hero ends at 73px of a 900px screen | fix: Fill the first screen with the visual or the headline, not with copy
+  NOTE 58 :1 [1440px] 325 words on one screen (from y=1950) | fix: One idea per screen: cut to about 80 words, make the section an object
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included | fix: A landing strip, not a page: six to nine sections, five on a thin prompt (layout.md § 3)
+  NOTE 78 :1 [1440px] section heads render at 18px under a 44px hero head | fix: h2 at --text-section (about 52px at 1440), item titles at --text-title (layout.md § 2)
+http://localhost:3000/
+  WAIVED 72 :1 [1440px] text crowds the edge of its box: details.panel bottom -543px
+  NOTE 44c :1 [1440px] hero ends at 552px of a 900px screen
+  NOTE 58 :1 [1440px] 264 words on one screen (from y=1300)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 348px of nothing between the hero's last content (y 552) and the fold | fix: Centre the content in the screen and grow the visual or the head (layout.md § 6); never fill it with copy
+http://localhost:3000/company/NVDA
+  WAIVED 72 :1 [1440px] text crowds the edge of its box: details.year left 0px, bottom -1036px; details.year left 0px, bottom -1036px;…
+  DISMISSED F25 :1 [375px] a table opens with 54 columns off-screen (from "Stated")
+  NOTE 44c :1 [1440px] hero ends at 321px of a 900px screen
+  NOTE 58 :1 [1440px] 1182 words on one screen (from y=4000)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 579px of nothing between the hero's last content (y 321) and the fold
+http://localhost:3000/company/TGT
+  WAIVED 72 :1 [1440px] text crowds the edge of its box: details.year left 0px, bottom -931px; details.year left 0px, bottom -546px; d…
+  DISMISSED F25 :1 [375px] a table opens with 48 columns off-screen (from "Stated")
+  NOTE 44c :1 [1440px] hero ends at 321px of a 900px screen
+  NOTE 58 :1 [1440px] 677 words on one screen (from y=2900)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 579px of nothing between the hero's last content (y 321) and the fold
+http://localhost:3000/misses
+  DISMISSED F25 :1 [375px] a table opens with 6 columns off-screen (from "Guided range")
+  NOTE 44c :1 [1440px] hero ends at 236px of a 900px screen
+  NOTE 58 :1 [1440px] 237 words on one screen (from y=600)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 664px of nothing between the hero's last content (y 236) and the fold
+http://localhost:3000/compare?t=NVDA
+  NOTE 44c :1 [1440px] hero ends at 211px of a 900px screen
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 676px of nothing between the hero's last content (y 211) and the next section
+http://localhost:3000/row/01DV4GWZ002WYJ1A8V8XEKTWR1
+  NOTE 44c :1 [1440px] hero ends at 383px of a 900px screen
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 517px of nothing between the hero's last content (y 383) and the fold
+sloplint: 0 FAIL, 0 WARN, 14 WAIVED, 3 DISMISSED, 26 NOTE across 1 file(s) and 7 URL(s).

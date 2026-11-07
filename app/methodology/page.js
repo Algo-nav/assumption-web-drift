@@ -1,6 +1,7 @@
 import { loadWriteup } from "../lib/data/source";
 import { renderWriteup } from "../lib/writeup";
 import { getAllRows, summarise } from "../lib/data";
+import { DATASET_URL, SPACE_URL, GITHUB_URL } from "../lib/site";
 
 export const metadata = { title: "Methodology" };
 
@@ -34,6 +35,20 @@ export default function Methodology() {
             <span>of misses never acknowledged ({fmt(s.neverAcknowledged)} of {fmt(s.missed)})</span>
           </div>
         </div>
+      </section>
+      <section className="card provenance" id="provenance" aria-labelledby="provenance-h">
+        <h2 id="provenance-h">Provenance</h2>
+        <p>
+          assumption-drift is a product of SCND Order, built by Navneet. The dataset is released under the
+          CC-BY-4.0 licence. Read the <a href={DATASET_URL}>dataset</a>, browse every row in the{" "}
+          <a href={SPACE_URL}>Space</a>, or read the code on <a href={GITHUB_URL}>GitHub</a>.
+        </p>
+        <p>
+          Dataset: <a href={DATASET_URL}>assumption-drift</a>, licensed CC-BY-4.0.
+        </p>
+        <p>
+          Source: filings on <a href="https://www.sec.gov/edgar">SEC EDGAR</a>. Each row links to the filing it came from.
+        </p>
       </section>
     </div>
   );

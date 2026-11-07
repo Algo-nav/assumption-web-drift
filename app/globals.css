@@ -1,8 +1,10 @@
-/* Hallmark · checked: 2026-11-01 · genre: editorial (inferred)
- * floor: 0 FAIL · fixed: 34, 48, 7a, 3, F3, F7, 26b
+/* Hallmark · checked: 2026-11-07 · genre: editorial (inferred)
+ * floor: 0 FAIL · fixed: 34, 48, 7a, 3, F3, F7, 26b, 64, 39b
  * surface: absolute (white cards by the owner's choice) · built: the project · redesign: polish · v2.0.0 */
 /* Hallmark · waive 7b · var(--card) white on company, row and tile cards · the owner keeps those cards white and tints the secondary panels instead */
 /* Hallmark · dismissed F25 · intentional: wide tables scroll sideways at 375px, cue shown */
+/* Hallmark · waive 72 · details.panel and details.year are measured closed (negative bottom = the hidden body) · open, .panel-body and the year table carry their own padding */
+/* Hallmark · waive 49b · the github.com link in the write-up, the code repository address, quoted as published · the write-up is the dataset's own text; at 320px the address wraps rather than run off the screen */
 @import "tailwindcss";
 
 :root {
@@ -33,6 +35,8 @@
   --mark-met: #6b675f;
   --mark-better: #6f9279;
   --mark-open: #bdb9ad;
+  /* Outline of a hollow (unresolved) bar: darker than the fill tone so 1.5px still reads on white. */
+  --mark-open-line: #8f8a7d;
 
   /* 8px grid */
   --s1: 8px;
@@ -40,6 +44,11 @@
   --s3: 24px;
   --s4: 32px;
   --s6: 48px;
+
+  /* Footer rhythm, matched to scndorder.com. */
+  --footer-gap: 48px; /* last content section to the footer columns, all of it (no rule between) */
+  --footer-legal-gap: 120px; /* footer columns to the legal row */
+  --footer-mark-gap: 72px; /* legal row to the wordmark */
 
   /* Type scale, matched to scndorder.com: size, weight and line-height as the main site sets them. */
   --fs-body: 16px;
@@ -177,7 +186,7 @@ h3 {
 
 .page {
   padding-top: var(--s4);
-  padding-bottom: var(--s6);
+  padding-bottom: var(--footer-gap);
 }
 .stack > * + * {
   margin-top: var(--s4);
@@ -367,8 +376,8 @@ summary:focus-visible {
 
 /* Footer: four columns, a legal row, then the wordmark fitted to the full width as the last thing on the page. */
 .site-footer {
-  border-top: 1px solid var(--line);
-  padding-top: calc(var(--s6) + var(--s1));
+  /* No rule and no top padding: the page's bottom padding is the whole gap to the columns. */
+  padding-top: 0;
 }
 .footer-cols {
   display: grid;
@@ -402,6 +411,11 @@ summary:focus-visible {
   line-height: var(--lh-foot-link);
   margin: 0 0 var(--s2);
 }
+.footer-cols > div > :last-child,
+.footer-cols > div > a:not(.btn):last-child {
+  /* The last link's spacing would add to the gap to the legal row, so the column block ends at its last line. */
+  margin-bottom: 0;
+}
 .footer-cols a:not(.btn):hover {
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -422,7 +436,7 @@ summary:focus-visible {
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--s1) var(--s3);
-  margin: calc(var(--s6) + var(--s2)) 0 var(--s3);
+  margin: var(--footer-legal-gap) 0 var(--footer-mark-gap);
 }
 .footer-legal > a {
   text-decoration: none;
@@ -570,6 +584,7 @@ summary:focus-visible {
 .company-card .top {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: var(--s1);
   color: var(--faint);
   font-size: var(--fs-small);
@@ -988,17 +1003,48 @@ dl.facts dd {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: var(--s2);
+  /* One padding on all four sides. The SVG has no outer margin of its own: tick labels end at its left edge
+     (widest label), the plot at its right, the year labels at its bottom. */
+  padding: var(--s3);
   min-width: 0;
 }
-.chart h3 {
-  margin-bottom: var(--s1);
+/* Title and axis notes share one line; the title gives way first. */
+.chart-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  margin-bottom: var(--s2);
+  min-width: 0;
+}
+.chart-head h3 {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chart-note {
+  margin-left: auto;
+  flex: none;
+  font-size: 12px;
+  line-height: var(--lh-small);
+  color: var(--faint);
+  white-space: nowrap;
+}
+@media (max-width: 479px) {
+  .chart-head {
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+  .chart-note {
+    margin-left: 0;
+  }
 }
 .chart svg {
   display: block;
   width: 100%;
-  max-width: 640px;
   height: auto;
+  overflow: visible;
 }
 .chart text {
   font-family: var(--font-ibm-plex-mono), monospace;
@@ -1017,6 +1063,29 @@ dl.facts dd {
 .chart .link-line {
   stroke-width: 1px;
   opacity: 0.55;
+}
+.chart .axis-line,
+.chart .x-tick {
+  stroke: var(--panel-line);
+  stroke-width: 1;
+}
+/* Unresolved: a hollow bar, the card showing through. */
+.chart .bar-open {
+  fill: var(--card);
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
+}
+.chart .edge {
+  stroke: none;
+}
+.chart-key .key-open {
+  box-sizing: border-box;
+  border: 1.5px solid var(--mark-open-line);
+  background: var(--card);
+  border-radius: 1px;
+  width: 6px;
+  height: 10px;
+  vertical-align: -1px;
 }
 .chart .hit {
   fill: transparent;
@@ -1056,6 +1125,10 @@ dl.facts dd {
 .chart .pt:hover .bar,
 .chart .pt:focus-visible .bar {
   stroke-width: 6px;
+}
+.chart .pt:hover .bar-open,
+.chart .pt:focus-visible .bar-open {
+  stroke-width: 2.5px;
 }
 .chart .pt:focus-visible {
   outline: 2px solid var(--ink);
@@ -1208,9 +1281,6 @@ table.data td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.chart .axis-note {
-  font-style: italic;
-}
 
 table.data.misses {
   /* The column widths in app/misses/page.js, summed. Company and Metric may cut a long name short; both
@@ -1271,4 +1341,101 @@ a[href*="sec.gov"] {
   .table-scroll {
     animation: none;
   }
+}
+/* After the tone rules: a hollow bar keeps the card fill and takes the darker outline. */
+.chart .bar-open.tone-open {
+  fill: var(--card);
+  stroke: var(--mark-open-line);
+}
+
+/* Home search: the one-line request offer when nothing matches. */
+.search-miss {
+  margin: var(--s1) 0 0;
+  color: var(--body);
+}
+.link-button {
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.link-button:hover {
+  color: var(--brg);
+}
+.link-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Company header: name (with logo) and the compare link on one row, wrapping on narrow screens. */
+.company-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+}
+.company-head .btn {
+  flex: none;
+}
+
+.provenance p {
+  margin: var(--s1) 0 0;
+  max-width: 640px;
+}
+.provenance h2 {
+  margin: 0;
+}
+
+/* Company logos: sized in the markup to fit a max height and a max width (Logo.js), never stretched. */
+.logo {
+  display: block;
+  flex: none;
+  object-fit: contain;
+  object-position: left center;
+}
+.logo-mono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  aspect-ratio: 1;
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.company-card .ticker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  flex: none;
+  white-space: nowrap;
+}
+/* The sector gives way to the logo and ticker, wrapping on the right. */
+.company-card .top > span:last-child {
+  min-width: 0;
+  text-align: right;
+}
+.company-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s2);
+  min-width: 0;
+}
+.company-title h1 {
+  min-width: 0;
+  overflow-wrap: break-word;
 }

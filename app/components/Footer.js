@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Wordmark from "./Wordmark";
-import { DATASET_URL, X_URL, LINKEDIN_URL, SITE_NAME } from "../lib/site";
+import { X_URL, LINKEDIN_URL, SITE_NAME, MAIN_URL, ABOUT_URL, CONTACT_URL } from "../lib/site";
 
 const follow = [
   ["X", X_URL],
@@ -26,9 +26,9 @@ export default function Footer() {
           </div>
           <div>
             <h2 className="footer-h">Company</h2>
-            <a href="https://scndorder.com">scndorder.com</a>
-            <Link href="/about">About</Link>
-            <a href="mailto:contact@scndorder.com">Contact</a>
+            <a href={MAIN_URL}>scndorder.com</a>
+            <a href={ABOUT_URL}>About</a>
+            <a href={CONTACT_URL}>Contact</a>
           </div>
           {follow.length > 0 && (
             <div>
@@ -42,12 +42,6 @@ export default function Footer() {
         <div className="footer-legal small">
           <a href="https://scndorder.com/privacy">Privacy</a>
           <a href="https://scndorder.com/terms">Terms</a>
-          <p>
-            Dataset: <a href={DATASET_URL}>assumption-drift</a>, licensed CC-BY-4.0.
-          </p>
-          <p>
-            Source: filings on <a href="https://www.sec.gov/edgar">SEC EDGAR</a>. Each row links to the filing it came from.
-          </p>
           <span className="mono footer-copy">© {new Date().getFullYear()} {SITE_NAME}</span>
         </div>
         <div className="footer-mark" aria-hidden="true">

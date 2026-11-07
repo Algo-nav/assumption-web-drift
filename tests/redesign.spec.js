@@ -109,7 +109,7 @@ test.describe("compare", () => {
 });
 
 test.describe("no external loads", () => {
-  const urls = ["/", "/company/NVDA", "/company/NVDA?metric=revenue", `/row/${resolved.record_id}`, "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025", "/methodology", "/about"];
+  const urls = ["/", "/company/NVDA", "/company/NVDA?metric=revenue", `/row/${resolved.record_id}`, "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025", "/methodology", "/company/TGT"];
   for (const url of urls) {
     test(`only same-origin scripts, styles and fonts: ${url}`, async ({ page, baseURL }) => {
       const origin = new URL(baseURL).origin;

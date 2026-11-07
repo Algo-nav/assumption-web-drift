@@ -3,9 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import DirectionBar from "./DirectionBar";
+import Logo, { LOGO_TILE } from "./Logo";
 
 // The hero (`head`, the search box, then `children`: the stat tiles and the counts line) and the company grid
 // below it are separate sections that share the search state, so the grid still filters as you type.
+// Scrolls to the request form on this page and puts the query in its company field.
+function requestCompany(query) {
+  const field = document.getElementById("req-company");
+  const section = document.getElementById("request");
+  if (!field || !section) return;
+  field.value = query;
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  section.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+  // Focus without a second jump; the email field is next, so the cursor goes to the end of the prefilled name.
+  field.focus({ preventScroll: true });
+  field.setSelectionRange(query.length, query.length);
+}
+
 export default function CompanyFinder({ companies, head, children }) {
   const [q, setQ] = useState("");
   const needle = q.trim().toLowerCase();
@@ -28,6 +42,14 @@ export default function CompanyFinder({ companies, head, children }) {
           onChange={(e) => setQ(e.target.value)}
           autoComplete="off"
         />
+        {needle && shown.length === 0 ? (
+          <p className="search-miss" data-testid="search-miss">
+            Not here yet.{" "}
+            <button type="button" className="link-button" onClick={() => requestCompany(q.trim())}>
+              Request {q.trim()}
+            </button>
+          </p>
+        ) : null}
       </div>
 
       {children}
@@ -45,7 +67,10 @@ export default function CompanyFinder({ companies, head, children }) {
             <li key={c.ticker}>
               <Link href={`/company/${c.ticker}`} className="company-card">
                 <span className="top">
-                  <span className="mono">{c.ticker}</span>
+                  <span className="ticker">
+                    <Logo ticker={c.ticker} ratio={c.logo} max={LOGO_TILE} />
+                    <span className="mono">{c.ticker}</span>
+                  </span>
                   <span>{c.sector}</span>
                 </span>
                 <span className="name">{c.name}</span>

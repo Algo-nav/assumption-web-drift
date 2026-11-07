@@ -2,6 +2,10 @@ import { buildCsp, NOSNIFF, REFERRER } from "./csp.mjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The pilot's /about page moved to the end of the methodology.
+  async redirects() {
+    return [{ source: "/about", destination: "/methodology#provenance", permanent: true }];
+  },
   async headers() {
     return [
       // Pages get their CSP (with a nonce) from proxy.js. A second CSP header here would be intersected with it

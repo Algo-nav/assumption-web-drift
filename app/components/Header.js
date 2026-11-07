@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PRODUCT_NAME } from "../lib/site";
+import { PRODUCT_NAME, CONTACT_URL } from "../lib/site";
 
 export default function Header() {
   return (
@@ -14,7 +14,7 @@ export default function Header() {
           <Link href="/misses">Misses</Link>
           <Link href="/compare">Compare</Link>
           <Link href="/methodology">Methodology</Link>
-          <Link href="/about">About</Link>
+          <a href={CONTACT_URL}>Contact</a>
         </nav>
         <Link href="/#request" className="btn btn-cta btn-sm">Request a company</Link>
       </div>
