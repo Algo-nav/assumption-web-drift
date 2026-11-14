@@ -10,6 +10,8 @@ export const GITHUB_URL = "https://github.com/Algo-nav/assumption-drift";
 export const MAIN_URL = "https://scndorder.com";
 export const ABOUT_URL = "https://scndorder.com/about";
 export const CONTACT_URL = "https://scndorder.com/contact";
+export const PRIVACY_URL = "https://scndorder.com/privacy";
+export const TERMS_URL = "https://scndorder.com/terms";
 
 export const REQUEST_ROLES = ["Analyst", "PM", "Director of research", "CIO", "Other"];
 

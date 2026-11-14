@@ -13,7 +13,7 @@ export default function Methodology() {
   const pct = s.neverAcknowledgedShare == null ? "n/a" : `${(s.neverAcknowledgedShare * 100).toFixed(1)}%`;
   return (
     <div className="stack">
-      <p className="card small" style={{ margin: 0, maxWidth: "56ch" }}>
+      <p className="card small note">
         This is the write-up published with the dataset. The counts in it were taken when it was written.
         The counts in the grid at the foot of this page and on the home page are computed from the release file this site is serving.
       </p>

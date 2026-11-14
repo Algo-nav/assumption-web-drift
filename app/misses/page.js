@@ -101,7 +101,7 @@ export default async function MissesPage({ searchParams }) {
 
       <section className="card">
         <div className="section-head">
-          <p style={{ margin: 0, color: "var(--ink)" }} data-testid="row-count" aria-live="polite">
+          <p data-testid="row-count" aria-live="polite">
             Showing {rows.length} of {ofSide.length} {side}-side misses
           </p>
           {(company || metric) && <Link href={href({ company: "", metric: "" })} scroll={false} className="small">Clear filters</Link>}
@@ -109,8 +109,8 @@ export default async function MissesPage({ searchParams }) {
         {rows.length === 0 ? (
           <div className="empty">
             <h2>No misses match</h2>
-            <p style={{ margin: "0 0 var(--s2)" }}>No {side}-side miss fits both filters. Clear one and try again.</p>
-            <Link href={href({ company: "", metric: "" })} className="btn btn-sm">Clear filters</Link>
+            <p>No {side}-side miss fits both filters. Clear one and try again.</p>
+            <Link href={href({ company: "", metric: "" })} className="btn ghost sm">Clear filters</Link>
           </div>
         ) : (
           <>
@@ -155,7 +155,7 @@ export default async function MissesPage({ searchParams }) {
                       {r.beyondPct == null ? <span className="faint">n/a</span> : `${r.beyondPct.toFixed(1)}%`}
                     </td>
                     <td className="nowrap mono">{r.statedAt}</td>
-                    <td>{r.acknowledged ? "yes" : "no"}</td>
+                    <td>{r.acknowledged ? <span className="status"><i className="sw ack" aria-hidden="true" />yes</span> : <span className="faint">no</span>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -164,7 +164,7 @@ export default async function MissesPage({ searchParams }) {
           </>
         )}
         {sort === "by" && !metric && rows.length > 0 ? (
-          <p className="small faint" style={{ margin: "var(--s2) 0 0" }}>
+          <p className="small faint table-note">
             By is in each metric&rsquo;s own unit, so it only compares like with like. Pick a metric to sort by it.
           </p>
         ) : null}

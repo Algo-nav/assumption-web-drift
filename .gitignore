@@ -9,3 +9,5 @@ node_modules/
 /blob-report/
 .advisor/
 !.env.example
+
+.hallmark/

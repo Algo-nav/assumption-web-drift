@@ -3,7 +3,7 @@
 export default function ReviewMachine({ row }) {
   if (!row || !row.machineReviewed) return null;
   return (
-    <span className="status" data-slot="review-machine" data-testid="review-machine">
+    <span className="tag" data-slot="review-machine" data-testid="review-machine">
       review: machine-reviewed
     </span>
   );

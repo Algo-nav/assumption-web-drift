@@ -1,0 +1,501 @@
+/* Hallmark · checked: 2026-11-14 · genre: modern-minimal · built: the project · system: DESIGN.md (locked) · stamp and waivers: app/globals.css */
+/* Everything that exists only on the pilot: the data surfaces. Tokens and chrome are in globals.css; authority
+   is DESIGN.md, and the meaning of each data colour is in its "Data colours" section. */
+
+/* ---------- page shell and type defaults ---------- */
+main { position: relative; color: var(--powder); }
+/* The nav is fixed; the page starts below it. */
+.page { padding: calc(var(--s900) + var(--s400)) 0 var(--section); }
+@media (max-width: 1080px) { .page { padding-top: calc(var(--s700) + var(--s500)); } }
+
+.stack > * + * { margin-top: var(--s600); }
+.stack-tight > * + * { margin-top: var(--s200); }
+
+/* Headings take the named steps: page title heading-3, section heading-6, item title-3. */
+main h1 { color: var(--powder-2); font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
+main h2 { color: var(--powder-2); font-size: 20px; line-height: 28px; font-weight: 600; text-wrap: balance; }
+main h3 { color: var(--powder-2); font-size: 16px; line-height: 24px; font-weight: 500; }
+main p { text-wrap: pretty; }
+@media (max-width: 700px) { main h1 { font-size: 30px; line-height: 36px; } }
+
+.small { font-size: 14px; line-height: 20px; }
+.faint { color: var(--powder-3); }
+.lede { max-width: 640px; margin: var(--s200) 0 0; font-size: 20px; line-height: 28px; text-wrap: pretty; }
+@media (max-width: 700px) { .lede { font-size: 18px; } }
+.crumb { margin: 0 0 var(--s100); font-size: 14px; line-height: 20px; }
+
+/* Links inside running text, table cells and captions: a dim underline that brightens. */
+main a:where(:not([class]), .mono, .small) {
+  color: var(--powder-2); text-decoration: underline; text-decoration-thickness: 1px;
+  text-decoration-color: var(--powder-3); text-underline-offset: 3px;
+}
+main a:where(:not([class]), .mono, .small):hover { text-decoration-color: var(--powder-2); }
+/* Short links never break across lines. */
+a[href*="sec.gov"] { white-space: nowrap; }
+
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s75) var(--s200); margin-bottom: var(--s200); }
+.section-head > p { margin: 0; color: var(--powder-2); }
+.section-head > p.tag { color: var(--powder-3); }
+
+/* ---------- surfaces ---------- */
+/* A card sits above the ground: navy raised and a hairline all the way round. No shadow. */
+.card { background: var(--navy-3); box-shadow: inset 0 0 0 1px var(--line); border-radius: 16px; padding: var(--s300); min-width: 0; }
+@media (max-width: 700px) { .card { padding: var(--s200); } }
+
+/* A panel: the request form, the record in full. */
+.band { background: var(--navy-3); box-shadow: inset 0 0 0 1px var(--line); border-radius: 24px; padding: var(--s600); scroll-margin-top: var(--s900); }
+.band > p { margin: var(--s75) 0 var(--s300); max-width: 34rem; }
+@media (max-width: 700px) { .band { padding: var(--s300) var(--s200); } }
+
+.empty { text-align: center; padding: var(--s400) var(--s200); }
+.empty h1, .empty h2 { margin-bottom: var(--s75); }
+.empty p { margin: 0 0 var(--s200); }
+
+/* ---------- data marks ---------- */
+/* One square per status, in its data colour: the same grain the unit chart is made of. */
+.sw { display: inline-block; flex: none; width: 8px; height: 8px; background: var(--powder); }
+.sw.better { background: var(--green); }
+.sw.worse { background: var(--brick); }
+.sw.open { background: transparent; box-shadow: inset 0 0 0 1px var(--powder-3); }
+.sw.withdrawn { background: var(--powder-4); }
+.sw.ack { background: transparent; box-shadow: inset 0 0 0 1px var(--red); }
+.sw.never { background: var(--red); }
+.sw.conflict { background: var(--amber); }
+
+.status { display: inline-flex; align-items: center; gap: var(--s75); color: var(--powder-2); white-space: nowrap; }
+/* Brick is a fill colour: it does not reach text contrast on navy, so the word takes the lifted brick. */
+.status-worse, .text-worse { color: var(--brick-2); }
+.status-open, .status-withdrawn { color: var(--powder); }
+.tag { font: 400 12px/16px var(--mono); color: var(--powder-3); }
+
+/* Miss-direction bar: better versus worse */
+.dirbar { display: flex; height: 8px; overflow: hidden; background: var(--tint); min-width: 0; }
+.dirbar i { display: block; height: 100%; }
+.dirbar .better { background: var(--green); }
+.dirbar .worse { background: var(--brick); }
+.dirbar-key, .chart-key { display: flex; flex-wrap: wrap; gap: var(--s50) var(--s200); font-size: 14px; line-height: 20px; color: var(--powder-3); }
+.dirbar-key { margin-top: var(--s75); font-family: var(--mono); font-size: 12px; }
+.dirbar-key span, .chart-key span { display: inline-flex; align-items: center; gap: var(--s75); }
+.chart-key .key-open { flex: none; width: 6px; height: 10px; box-shadow: inset 0 0 0 1.5px var(--powder-3); }
+
+/* Company logos: sized in the markup to fit a max height and a max width (Logo.js), never stretched. The brand
+   files keep their own colours, so each sits on a powder plate; a monogram is ink on the same plate. */
+.logo-plate { display: inline-flex; align-items: center; justify-content: center; flex: none; background: var(--powder-2); border-radius: 4px; }
+.logo-plate.lg { border-radius: 8px; }
+.logo { display: block; flex: none; object-fit: contain; object-position: left center; }
+.logo-mono {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; aspect-ratio: 1;
+  color: var(--ink); font-family: var(--mono); font-weight: 500; line-height: 1; letter-spacing: .02em;
+}
+
+/* ---------- chips: filters ---------- */
+.filters { display: grid; gap: var(--s200); }
+.pill-group { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s75); }
+.pill-group > .label { margin: 0; min-width: 96px; color: var(--powder-3); }
+.pill {
+  position: relative; isolation: isolate; display: inline-flex; align-items: center; min-height: 32px;
+  padding: 0 var(--s100); border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--powder); font: 500 14px/20px var(--sans); white-space: nowrap;
+  transition: transform .5s var(--ease);
+}
+.pill::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--tint); opacity: 0; transition: opacity .3s var(--ease); }
+.pill:hover::before { opacity: 1; }
+.pill:active { transform: scale(.98); }
+button.pill { border: 0; background: transparent; cursor: pointer; }
+.pill .mono { margin-left: var(--s75); font-size: 12px; color: var(--powder-3); }
+.pill:is([aria-current="true"], [aria-pressed="true"]) { background: var(--powder-2); color: var(--ink); box-shadow: none; }
+/* An active chip is already the brightest thing in its row: it has no hover layer. */
+.pill:is([aria-current="true"], [aria-pressed="true"])::before { display: none; }
+.pill:is([aria-current="true"], [aria-pressed="true"]) .mono { color: var(--ink-2); }
+@media (pointer: coarse) { .pill { min-height: 40px; } }
+
+/* ---------- tables ---------- */
+.table-scroll { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+table.data {
+  border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 14px; line-height: 20px;
+  /* The column widths in app/company/[ticker]/page.js, summed: each column fits its widest one-line content
+     except Metric, which may cut a long name short (the cell carries it as its title). */
+  min-width: 936px;
+}
+table.data th {
+  text-align: left; font-size: 12px; line-height: 16px; font-weight: 500; color: var(--powder-3);
+  padding: var(--s75) var(--s75) var(--s75) 0; border-bottom: 1px solid var(--line-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+table.data td {
+  padding: var(--s75) var(--s75) var(--s75) 0; border-bottom: 1px solid var(--line); vertical-align: middle;
+  color: var(--powder-2); overflow: hidden; text-overflow: ellipsis;
+}
+table.data tbody tr:hover td { background: var(--tint); }
+table.data .num { text-align: right; white-space: nowrap; }
+/* Figures and dates in tables: Plex Mono, so the digits line up. Headers stay in Aspekta. 13px is the one size
+   off the scale: at 14px the columns no longer fit beside the rail, at 12px the figures are too small to be
+   the content. */
+table.data td.num, table.data td.mono { font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+table.data td.nowrap { white-space: nowrap; }
+table.data td .faint { color: var(--powder-3); }
+table.data td.text-worse { color: var(--brick-2); }
+table.data td .status { vertical-align: top; }
+table.data.misses {
+  /* The column widths in app/misses/page.js, summed. Company and Metric may cut a long name short; both
+     cells carry the full name as their title. */
+  min-width: 1004px;
+}
+table.data th .sort { color: var(--powder-3); }
+table.data th .sort:hover, table.data th[aria-sort] .sort { color: var(--powder-2); text-decoration: underline; text-underline-offset: 3px; }
+.figure-sm { font-family: var(--mono); font-size: 14px; line-height: 20px; font-variant-numeric: tabular-nums; }
+
+/* Scrolling tables: a one-line hint above, and a soft fade at the right edge that closes as the table
+   reaches its end. TableScroll shows both only while the table is wider than its box. */
+.scroll-hint { margin: 0 0 var(--s75); }
+.scroll-hint[hidden] { display: none; }
+@property --edge { syntax: "<length>"; inherits: false; initial-value: 32px; }
+@keyframes edge-out { 0%, 90% { --edge: 32px; } 100% { --edge: 0px; } }
+.table-scroll[data-overflows] { mask-image: linear-gradient(to right, var(--ink) calc(100% - var(--edge)), transparent); }
+@supports (animation-timeline: scroll(self x)) {
+  .table-scroll[data-overflows] { animation: edge-out linear both; animation-timeline: scroll(self x); }
+}
+
+/* Fiscal-year groups on the company page: ruled rows, not boxes. */
+details.year { box-shadow: inset 0 1px 0 var(--line); }
+details.year > summary {
+  display: flex; align-items: center; gap: var(--s200); min-height: 48px; cursor: pointer; list-style: none;
+  color: var(--powder-2); border-radius: 8px;
+}
+details.year > summary::-webkit-details-marker { display: none; }
+details.year > summary::before { content: "+"; width: 16px; font: 400 16px/24px var(--mono); color: var(--powder-3); text-align: center; transition: transform .5s var(--ease); }
+details.year[open] > summary::before { transform: rotate(45deg); }
+details.year > summary:hover::before { color: var(--powder-2); }
+details.year .year-name { font-weight: 600; }
+details.year .year-count { font: 400 12px/16px var(--mono); color: var(--powder-3); }
+details.year > .table-scroll, details.year > .scroll-hint { padding-bottom: var(--s200); }
+
+/* Collapsible panel: one row that opens, as the main site's FAQ rows do. */
+details.panel { background: var(--navy-3); box-shadow: inset 0 0 0 1px var(--line); border-radius: 12px; }
+details.panel > summary {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s300); padding: var(--s300);
+  cursor: pointer; list-style: none; color: var(--powder-2); font-size: 16px; line-height: 24px; font-weight: 500; border-radius: 12px;
+}
+details.panel > summary::-webkit-details-marker { display: none; }
+details.panel > summary::after { content: "+"; width: 16px; font: 400 20px/24px var(--mono); color: var(--powder-3); text-align: center; transition: transform .5s var(--ease); }
+details.panel[open] > summary::after { transform: rotate(45deg); }
+details.panel > .panel-body { padding: 0 var(--s300) var(--s300); }
+details.panel > .panel-body > p { max-width: 34rem; }
+/* Inside the panel the worked example is open type under a hairline, not boxes in a box. */
+details.panel .card { background: transparent; box-shadow: inset 0 1px 0 var(--line); border-radius: 0; padding: var(--s200) 0 0; }
+details.panel ul { padding-left: var(--s300); list-style: disc; max-width: 34rem; }
+details.panel li::marker { color: var(--powder-3); }
+details.panel b { color: var(--powder-2); }
+@media (max-width: 700px) {
+  details.panel > summary { padding: var(--s200); }
+  details.panel > .panel-body { padding: 0 var(--s200) var(--s200); }
+}
+
+/* ---------- evidence ---------- */
+/* The excerpt is quoted exactly as filed, inside a hairline, with one grain at its corner. */
+.excerpt { position: relative; margin: 0; padding: var(--s200); border: 1px solid var(--line-2); color: var(--powder-2); overflow-wrap: anywhere; }
+.excerpt::before { content: ""; position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; background: var(--powder); }
+.excerpt-src { margin: var(--s75) 0 0; font-size: 14px; line-height: 20px; color: var(--powder-3); }
+
+.pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s300); }
+@media (min-width: 768px) { .pair { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s200) var(--s300); }
+@media (min-width: 768px) {
+  .fields-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fields-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.field + .field { margin-top: var(--s75); }
+.form-foot { margin-top: var(--s300); }
+.request-foot { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--s200); margin-top: var(--s300); }
+.request-out { flex: 1 1 280px; }
+.request-out:empty { display: none; }
+.honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+dl.facts { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s75) var(--s200); }
+@media (min-width: 640px) { dl.facts { grid-template-columns: 160px minmax(0, 1fr); } }
+dl.facts dt { color: var(--powder-3); font-size: 14px; line-height: 24px; }
+dl.facts dd { margin: 0; color: var(--powder-2); overflow-wrap: anywhere; }
+/* Figures, dates and ids in a fact list are one mono size. */
+dl.facts dd:is(.mono, .figure-sm), dl.facts dd > .mono { font-family: var(--mono); font-size: 14px; line-height: 24px; font-variant-numeric: tabular-nums; }
+
+/* The row page's summary: a raised card inside a powder hairline. */
+.callout {
+  margin: var(--s300) 0 0; padding: var(--s300); background: var(--navy-3); box-shadow: inset 0 0 0 1px var(--line-2);
+  border-radius: 16px; color: var(--powder-2); font-size: 20px; line-height: 28px; text-wrap: pretty;
+}
+@media (max-width: 700px) { .callout { padding: var(--s200); font-size: 18px; } }
+
+/* Previous and next statement: two plates. */
+.row-nav { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s200); }
+@media (min-width: 640px) { .row-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.row-nav a { display: block; border-radius: 12px; padding: var(--s200) var(--s300); color: var(--powder-2); }
+.row-nav a > .small { display: block; }
+.row-nav .next { text-align: right; }
+.row-nav .none { border-radius: 12px; padding: var(--s200) var(--s300); box-shadow: inset 0 0 0 1px var(--line); color: var(--powder-3); }
+.row-nav .none.next { text-align: right; }
+.row-nav > p { margin: 0; grid-column: 1 / -1; }
+@media (max-width: 399px) {
+  .row-nav a { width: 100%; }
+  .row-nav a > .small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+
+.row-id { margin: var(--s200) 0 0; font-size: 12px; line-height: 16px; color: var(--powder-3); overflow-wrap: anywhere; }
+.card > h2 { margin-bottom: var(--s200); }
+.card h3 { margin-bottom: var(--s75); }
+.review-tags { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s75) var(--s200); }
+.review-by { margin-top: var(--s100); }
+.side-line { color: var(--powder-2); }
+.table-note { margin: var(--s200) 0 0; }
+
+/* ---------- 404 and errors: the main site's page, a lookup written as a record entry ---------- */
+.nf { max-width: 720px; min-height: 56vh; }
+.nf h1 { margin: 0; }
+.nf .lead { margin: var(--s300) 0 0; color: var(--powder); }
+.nf-entry { margin-top: var(--s500); background: var(--navy-3); }
+.nf-links { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s200) var(--s300); margin-top: var(--s500); }
+main h1.heading-2 { font-size: 48px; line-height: 48px; letter-spacing: -.02em; }
+@media (max-width: 700px) { main h1.heading-2 { font-size: 36px; line-height: 40px; letter-spacing: -.01em; } }
+
+/* ---------- charts ---------- */
+.charts { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s300); }
+@media (min-width: 900px) { .charts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* A chart sits below the ground (navy deep), where the data colours have the most contrast.
+   One padding on all four sides. The SVG has no outer margin of its own: tick labels end at its left edge
+   (widest label), the plot at its right, the year labels at its bottom. */
+.chart { background: var(--navy-2); box-shadow: inset 0 0 0 1px var(--line); border-radius: 16px; padding: var(--s300); min-width: 0; }
+/* Title and axis notes share one line; the title gives way first. */
+.chart-head { display: flex; align-items: baseline; gap: var(--s200); margin-bottom: var(--s200); min-width: 0; }
+.chart-head h3 { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chart-note { margin-left: auto; flex: none; font: 400 12px/20px var(--mono); color: var(--powder-3); white-space: nowrap; }
+@media (max-width: 479px) {
+  .chart-head { flex-wrap: wrap; row-gap: 0; }
+  .chart-note { margin-left: 0; }
+}
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--mono); font-size: 12px; fill: var(--powder-3); }
+@media (max-width: 639px) { .chart text { font-size: 16px; } }
+.chart .grid-line { stroke: var(--line); stroke-width: 1; }
+.chart .link-line { stroke-width: 1px; opacity: .6; }
+.chart .axis-line, .chart .x-tick { stroke: var(--line-2); stroke-width: 1; }
+.chart .edge { stroke: none; }
+.chart .hit { fill: transparent; }
+/* Marks keep their pixel size whatever the chart is scaled to: bar 3px and dot radius 4px at 1280,
+   2px and 3px at 375. */
+.chart .bar, .chart .dot, .chart .link-line { vector-effect: non-scaling-stroke; }
+.chart .bar { stroke-width: 3px; stroke-linecap: butt; }
+.chart .dot { stroke-width: 8px; stroke-linecap: round; }
+.chart .dot-pick { stroke-width: 12px; }
+@media (max-width: 639px) {
+  .chart .bar { stroke-width: 2px; }
+  .chart .dot { stroke-width: 6px; }
+  .chart .dot-pick { stroke-width: 10px; }
+}
+.chart .pt { cursor: pointer; }
+.chart .pt:hover .bar, .chart .pt:focus-visible .bar { stroke-width: 6px; }
+.chart .pt:hover .bar-open, .chart .pt:focus-visible .bar-open { stroke-width: 2.5px; }
+.chart .pt:focus-visible { outline: 2px solid var(--powder-2); outline-offset: 2px; }
+.chart .pt:focus-visible .hit { stroke: var(--powder-2); stroke-width: 2; }
+.chart .tone-met { stroke: var(--powder); fill: var(--powder); }
+.chart .tone-better { stroke: var(--green); fill: var(--green); }
+.chart .tone-worse { stroke: var(--brick); fill: var(--brick); }
+.chart .tone-open { stroke: var(--powder-4); fill: var(--powder-4); }
+/* Unresolved: a hollow bar, the chart ground showing through, in dim powder. */
+.chart .bar-open, .chart .bar-open.tone-open { fill: var(--navy-2); stroke: var(--powder-3); stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
+.chart .dim { opacity: .25; }
+.chart .pick-label { fill: var(--powder-2); font-weight: 500; }
+
+/* ---------- methodology ---------- */
+.prose { color: var(--powder); overflow-wrap: anywhere; }
+.prose h1 { margin-bottom: var(--s200); }
+.prose h2 { margin: var(--s600) 0 var(--s100); font-size: 24px; line-height: 32px; }
+.prose h3 { margin: var(--s300) 0 var(--s75); font-weight: 600; }
+/* 34rem of Aspekta at 16px is about 72 characters a line: `ch` measures the zero, which is wider than the
+   average letter, so 68ch ran to 90. */
+.prose p, .prose ul, .prose ol { margin: 0 0 var(--s200); max-width: 34rem; text-wrap: pretty; }
+.prose ul, .prose ol { padding-left: var(--s300); }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li::marker { color: var(--powder-3); }
+.prose li + li { margin-top: var(--s75); }
+.prose table { display: block; overflow-x: auto; max-width: 100%; border-collapse: collapse; margin: 0 0 var(--s200); font-size: 14px; line-height: 20px; }
+.prose th, .prose td { text-align: left; padding: var(--s75) var(--s200) var(--s75) 0; border-bottom: 1px solid var(--line); }
+.prose th { color: var(--powder-3); font-weight: 500; border-bottom-color: var(--line-2); }
+.prose td { color: var(--powder-2); }
+.prose code { font-family: var(--mono); font-size: inherit; color: var(--powder-2); }
+.prose strong { font-weight: 600; color: var(--powder-2); }
+.prose blockquote { margin: 0 0 var(--s200); padding: var(--s200); border: 1px solid var(--line-2); color: var(--powder-2); }
+.prose pre { margin: 0 0 var(--s200); padding: var(--s200); overflow-x: auto; background: var(--navy-2); border-radius: 8px; }
+.note { margin: 0; max-width: 34rem; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s400) var(--s300); }
+@media (min-width: 768px) { .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { min-width: 0; padding-top: var(--s200); box-shadow: inset 0 1px 0 var(--line); }
+.stat b { display: block; color: var(--powder-2); font: 400 24px/32px var(--mono); font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: var(--s50); font-size: 14px; line-height: 20px; color: var(--powder-3); }
+
+.provenance p { margin: var(--s75) 0 0; max-width: 34rem; }
+.provenance h2 { margin: 0; }
+
+/* ---------- home ---------- */
+/* The first screen: the question, the search, the pilot line and the four figures. No grain. */
+.hero { padding-top: var(--s400); text-align: center; }
+.hero h1 { max-width: 760px; margin-inline: auto; min-width: 0; overflow-wrap: break-word; }
+.hero .lead { max-width: 680px; margin: var(--s300) auto 0; color: var(--powder); }
+.hero-search { position: relative; max-width: 680px; margin: var(--s500) auto 0; }
+.hero-search .field { min-height: 64px; padding: var(--s200) var(--s300); border-radius: 12px; background: var(--navy-3); font-size: 20px; line-height: 28px; }
+.hero-search .field:focus-visible { border-radius: 12px; }
+.hero-search .field::-webkit-search-cancel-button { filter: invert(1); opacity: .6; cursor: pointer; }
+/* The shortcut that focuses the box, shown while it is empty and only where there is a keyboard. */
+.hero-key { position: absolute; right: var(--s200); top: 20px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line-2); font-size: 12px; line-height: 16px; color: var(--powder-3); pointer-events: none; }
+.hero-search .field:focus ~ .hero-key { display: none; }
+@media (hover: none), (max-width: 700px) { .hero-key { display: none; } }
+.search-found { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--s75); margin-top: var(--s100); }
+.search-found:empty { display: none; }
+.search-found .pill .mono { margin: 0 var(--s75) 0 0; }
+.search-miss { margin: var(--s100) 0 0; }
+.link-button { font: inherit; color: var(--powder-2); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: var(--powder-3); text-underline-offset: 3px; overflow-wrap: anywhere; text-align: left; }
+.link-button:hover { text-decoration-color: var(--powder-2); }
+.hero-start { max-width: 34rem; margin: var(--s300) auto 0; color: var(--powder-3); text-wrap: pretty; }
+
+.strip { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s300) var(--s600); margin: var(--s600) 0 0; padding: 0; list-style: none; text-align: left; }
+.strip-item { display: block; border-radius: 8px; }
+.strip-item b { display: block; font-weight: 400; font-size: 30px; line-height: 36px; color: var(--powder-2); }
+.strip-item span { display: block; margin-top: var(--s50); font-size: 14px; line-height: 20px; color: var(--powder-3); }
+.strip-item:hover span { color: var(--powder-2); }
+/* The never-acknowledged count is the one scarlet figure. */
+.strip-item.hot b { color: var(--red); }
+@media (max-width: 700px) {
+  .hero { padding-top: var(--s200); }
+  .hero-search .field { font-size: 16px; line-height: 24px; padding: var(--s200); }
+  .strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s300) var(--s200); margin-top: var(--s500); }
+}
+
+/* The dataset at a glance: every statement as a square, beside the largest worse-side misses. */
+.heat { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--s600); align-items: start; }
+@media (max-width: 1000px) { .heat { grid-template-columns: minmax(0, 1fr); gap: var(--s500); } }
+.units { margin: var(--s200) 0 0; }
+.units svg { display: block; width: 100%; height: auto; overflow: visible; }
+.units path { transition: opacity .3s var(--ease); }
+.units path[data-g="met"] { fill: var(--powder); }
+.units path[data-g="acknowledged"] { fill: none; stroke: var(--red); stroke-width: 1px; vector-effect: non-scaling-stroke; }
+.units path[data-g="never"] { fill: var(--red); }
+.units path[data-g="open"] { fill: var(--powder); opacity: .15; }
+.units path[data-g="withdrawn"] { fill: var(--powder-4); }
+.units-legend { display: flex; flex-wrap: wrap; gap: var(--s75) var(--s300); margin: var(--s200) 0 0; padding: 0; list-style: none; font-size: 14px; line-height: 20px; color: var(--powder-3); }
+.units-legend li { display: flex; align-items: center; gap: var(--s75); cursor: default; }
+.units-legend b { font-weight: 400; color: var(--powder-2); }
+.units-legend i { flex: none; width: 8px; height: 8px; background: var(--powder); }
+.units-legend [data-g="acknowledged"] i { background: transparent; box-shadow: inset 0 0 0 1px var(--red); }
+.units-legend [data-g="never"] i { background: var(--red); }
+.units-legend [data-g="open"] i { opacity: .15; }
+.units-legend [data-g="withdrawn"] i { background: var(--powder-4); }
+/* Point at a legend entry and the rest of the chart steps back. Unresolved rests at 15% and is never stepped
+   below it: it is left out of every step-back, and its own entry raises it instead. */
+@media (hover: hover) {
+  .units:has(li[data-g="met"]:hover) path:not([data-g="met"], [data-g="open"]),
+  .units:has(li[data-g="acknowledged"]:hover) path:not([data-g="acknowledged"], [data-g="open"]),
+  .units:has(li[data-g="never"]:hover) path:not([data-g="never"], [data-g="open"]),
+  .units:has(li[data-g="withdrawn"]:hover) path:not([data-g="withdrawn"], [data-g="open"]),
+  .units:has(li[data-g="open"]:hover) path:not([data-g="open"]) { opacity: .12; }
+  .units:has(li[data-g="open"]:hover) path[data-g="open"] { opacity: .6; }
+}
+
+.feed h2 { font-size: 16px; line-height: 24px; }
+.feed-by { margin: var(--s50) 0 var(--s100); font-size: 14px; line-height: 20px; color: var(--powder-3); }
+.feed ol { margin: 0; padding: 0; list-style: none; }
+.feed li { box-shadow: inset 0 1px 0 var(--line); }
+.feed-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: var(--s100); margin: 0 calc(-1 * var(--s100)); padding: var(--s100); border-radius: 8px; color: var(--powder-2); font-size: 14px; line-height: 20px; }
+.feed-row:hover { background: var(--tint); }
+.feed-row small { display: block; margin-top: var(--s50); font-size: 12px; line-height: 16px; color: var(--powder-3); }
+.feed-row b { font-weight: 400; white-space: nowrap; }
+.feed-all { display: inline-block; margin-top: var(--s75); padding: var(--s50) 0; font-size: 14px; line-height: 20px; color: var(--powder-2); text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: var(--powder-3); text-underline-offset: 3px; }
+.feed-all:hover { text-decoration-color: var(--powder-2); }
+@media (max-width: 480px) {
+  .feed-row { grid-template-columns: minmax(0, 1fr); gap: var(--s50); }
+}
+
+/* Companies. The grid fills each row with as many tiles as fit, so it holds 15 companies or 50; the sector
+   chips and the order chips are what make 50 findable. */
+.companies { scroll-margin-top: var(--s900); }
+.grid-tools { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s100) var(--s300); margin-bottom: var(--s200); }
+.company-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(208px, 1fr)); gap: var(--s100); }
+.company-card { display: flex; flex-direction: column; gap: var(--s75); height: 100%; border-radius: 12px; padding: var(--s200); min-width: 0; }
+.company-card .top { display: flex; align-items: center; gap: var(--s75); color: var(--powder-3); font-size: 14px; line-height: 20px; min-width: 0; }
+.company-card .ticker { display: inline-flex; align-items: center; gap: var(--s75); flex: none; white-space: nowrap; color: var(--powder); }
+/* Tiles in a row are the same height whatever the name: the counts and the bar sit at the bottom. */
+.company-card .name { color: var(--powder-2); font-size: 14px; line-height: 20px; font-weight: 600; }
+.company-card .sector { margin-top: calc(-1 * var(--s50)); font-size: 12px; line-height: 16px; color: var(--powder-3); }
+.company-card .counts { margin-top: auto; padding-top: var(--s75); font-size: 12px; line-height: 16px; color: var(--powder-3); }
+@media (max-width: 480px) {
+  .company-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .company-card { padding: var(--s100); }
+}
+
+.band h2 { font-size: 24px; line-height: 32px; }
+.example-status { margin: var(--s75) 0 0; }
+.example-line { margin: var(--s200) 0 0; color: var(--powder-2); }
+details.panel .card h3 { margin-bottom: var(--s75); }
+
+/* ---------- company page ---------- */
+/* Header: name (with logo) and the compare link on one row, wrapping on narrow screens. */
+.company-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s200); }
+.company-head .btn { flex: none; }
+.company-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s75) var(--s200); min-width: 0; }
+.company-title h1 { min-width: 0; overflow-wrap: break-word; }
+.company-meta { display: flex; flex-wrap: wrap; gap: var(--s50) var(--s300); margin: var(--s200) 0 0; font-size: 12px; line-height: 16px; color: var(--powder-3); }
+.company-meta span:first-child { color: var(--powder); }
+.company-bar { max-width: 480px; margin-top: var(--s300); }
+
+/* The rail and the column. The rail holds the filters; the toggle folds it to a 44px strip, and the state is
+   in the URL. Nothing here animates a width: the rail's contents fade in. */
+.split { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: var(--s300); align-items: start; margin-top: var(--s600); }
+.split.collapsed { grid-template-columns: 44px minmax(0, 1fr); }
+.rail { position: sticky; top: var(--s900); max-height: calc(100vh - var(--s900) - var(--s300)); overflow-y: auto; scrollbar-width: thin; padding: var(--s50); margin: calc(-1 * var(--s50)); }
+.rail-top { display: flex; align-items: center; gap: var(--s100); }
+.rail-title { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--powder-3); }
+.rail-tog { position: relative; isolation: isolate; flex: none; display: block; width: 36px; height: 36px; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line); color: var(--powder); transition: transform .5s var(--ease); }
+.rail-tog::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--tint); opacity: 0; transition: opacity .3s var(--ease); }
+.rail-tog:hover::before { opacity: 1; }
+.rail-tog:active { transform: scale(.98); }
+.rail-tog i { position: absolute; left: 10px; width: 16px; height: 2px; background: currentColor; transform-origin: left center; transition: transform .5s var(--ease); }
+.rail-tog i:nth-child(1) { top: 11px; }
+.rail-tog i:nth-child(2) { top: 17px; }
+.rail-tog i:nth-child(3) { top: 23px; }
+/* Folded: the outer lines draw in, so the mark reads as a list pushed aside. */
+.rail-tog[aria-expanded="false"] i:nth-child(1), .rail-tog[aria-expanded="false"] i:nth-child(3) { transform: scaleX(.5); }
+.rail-body { margin-top: var(--s200); animation: rail-in .3s var(--ease) both; }
+@keyframes rail-in { from { opacity: 0; } }
+.rail-group + .rail-group { margin-top: var(--s300); }
+.rail-h { margin: 0 0 var(--s75); font-size: 14px; line-height: 20px; font-weight: 500; color: var(--powder-3); }
+.rail-pills { display: flex; flex-direction: column; gap: var(--s50); }
+.rail-pills .pill { white-space: normal; padding: var(--s50) var(--s100); }
+/* In the rail a chip is a row of a list, not a box: an outlined, left-aligned, full-width box reads as an
+   empty text field. The tint on hover and the powder fill when on are unchanged. */
+@media (min-width: 1001px) { .rail-pills .pill:not([aria-current="true"]) { box-shadow: none; } }
+/* Fiscal years are short and many: two to a row. */
+.rail-pills.years { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.rail-clear { display: inline-block; margin-top: var(--s200); }
+/* The strip: the toggle, then the number of filters that are on, in mono. With none on it shows nothing. */
+.split.collapsed .rail { overflow: visible; }
+.split.collapsed .rail-top { flex-direction: column; gap: var(--s100); width: 44px; padding: var(--s50) 0; border-radius: 12px; background: var(--navy-3); box-shadow: inset 0 0 0 1px var(--line); }
+.rail-count { padding-bottom: var(--s75); font-size: 12px; line-height: 16px; color: var(--powder-2); cursor: default; }
+@media (max-width: 1000px) {
+  .split, .split.collapsed { grid-template-columns: minmax(0, 1fr); margin-top: var(--s500); }
+  .rail { position: static; max-height: none; overflow: visible; }
+  .rail-pills, .rail-pills.years { display: flex; flex-direction: row; flex-wrap: wrap; gap: var(--s75); }
+  .split.collapsed .rail-top { flex-direction: row; width: auto; height: 44px; padding: 0 var(--s200) 0 var(--s50); }
+  .rail-count { padding-bottom: 0; }
+}
+.split-main { min-width: 0; }
+.rows { scroll-margin-top: var(--s900); }
+.tag a { color: var(--powder-2); text-decoration: underline; text-decoration-color: var(--powder-3); text-underline-offset: 3px; }
+.split-main .charts + details.panel, .split-main .panel-body > .charts { margin-top: var(--s200); }
+.tag { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .table-scroll { animation: none; }
+  .pill, .rail-tog, .rail-tog i, .units path, details.year > summary::before, details.panel > summary::after { transition: none; }
+  .rail-tog:active { transform: none; }
+  .pill:active { transform: none; }
+}

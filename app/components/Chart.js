@@ -23,8 +23,9 @@ const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
 // An unresolved statement is a hollow bar and has no dot. When the axis is trimmed, a value beyond it is drawn as a
 // small arrow at the plot edge instead of off the chart.
 // `x` is a shared [from, to] time range and `gutter` a shared label width, so the charts of one company line up; `highlight` maps a row id to a
-// short label, and every other point is dimmed.
-export default function Chart({ group, highlight = null, x = null, gutter = null }) {
+// short label, and every other point is dimmed. `only` is a set of row ids (the rail's status and fiscal-year
+// filters): points outside it are dimmed and drawn first, so the matching ones sit on top.
+export default function Chart({ group, highlight = null, x = null, gutter = null, only = null }) {
   const pts = group.points;
   const shown = plotsReported;
   const { scale, T, dom, ticks: yTicks, labels } = yAxis(group);
@@ -41,7 +42,8 @@ export default function Chart({ group, highlight = null, x = null, gutter = null
   const beyond = pts.filter((p) => out(p.lo) || out(p.hi) || (shown(p) && out(p.rep))).length;
 
   const years = fiscalTicks(group.ticker, x0, x1);
-  const ordered = highlight ? [...pts].sort((a, b) => Number(Boolean(highlight[a.id])) - Number(Boolean(highlight[b.id]))) : pts;
+  const lit = (p) => (highlight ? Boolean(highlight[p.id]) : only ? only.has(p.id) : true);
+  const ordered = highlight || only ? [...pts].sort((a, b) => Number(lit(a)) - Number(lit(b))) : pts;
   const notes = [scale === "log" ? "log scale" : null, beyond ? `axis trimmed; ${beyond} point${beyond === 1 ? "" : "s"} beyond` : null].filter(Boolean);
 
   const Arrow = ({ cx, dir, c }) => (
@@ -77,14 +79,14 @@ export default function Chart({ group, highlight = null, x = null, gutter = null
           const b = Y(p.lo);
           const mid = (t + b) / 2;
           const picked = highlight ? highlight[p.id] : null;
-          const dim = highlight && !picked ? " dim" : "";
+          const dim = lit(p) ? "" : " dim";
           const rep = shown(p);
           const dx = rep ? X(p.x1) : 0;
           const dy = rep ? Y(p.rep) : 0;
           const touches = rep && Math.hypot(dx - px, Math.max(0, t - dy, dy - b)) <= TOUCH;
           const open = p.status === "unresolved";
           return (
-            <a key={p.id} href={`/row/${p.id}`} className={`pt${dim}`} aria-label={p.text} data-point={p.id} data-status={p.status}>
+            <a key={p.id} href={`/row/${p.id}`} className={`pt${dim}`} aria-label={p.text} data-point={p.id} data-status={p.status} data-dim={dim ? "" : undefined}>
               <title>{p.text}</title>
               <rect className="hit" x={px - 6} y={t - 4} width={12} height={Math.max(b - t, 0) + 8} />
               {rep && !touches ? <line className={`link-line ${c}`} x1={px} y1={mid} x2={dx} y2={dy} /> : null}
@@ -117,11 +119,11 @@ export function ChartKey() {
     <div className="chart-key" aria-label="Chart key">
       <span>Bar: guided range, on the date stated</span>
       <span>Dot: reported figure, on the outcome date</span>
-      <span><i style={{ background: "var(--mark-met)" }} />met</span>
-      <span><i style={{ background: "var(--mark-better)" }} />missed, better</span>
-      <span><i style={{ background: "var(--red)" }} />missed, worse</span>
+      <span><i className="sw met" />met</span>
+      <span><i className="sw better" />missed, better</span>
+      <span><i className="sw worse" />missed, worse</span>
       <span><i className="key-open" />unresolved</span>
-      <span><i style={{ background: "var(--mark-open)" }} />withdrawn</span>
+      <span><i className="sw withdrawn" />withdrawn</span>
     </div>
   );
 }

@@ -6,7 +6,7 @@ const resolved = records.find((r) => r.status === "met" && r.outcome);
 
 test.describe("pages load", () => {
   for (const [url, heading] of [
-    ["/", /What companies guided/],
+    ["/", /Which companies miss their own guidance/],
     ["/company/NVDA", /NVIDIA/],
     [`/row/${resolved.record_id}`, /./],
     ["/compare", /Compare two periods/],
@@ -17,7 +17,7 @@ test.describe("pages load", () => {
       expect(res.status()).toBe(200);
       await expect(page.locator("h1").first()).toContainText(heading);
       // The legal row is Privacy, Terms and the copyright; the dataset and EDGAR lines live in /methodology#provenance.
-      const legal = page.locator("footer .footer-legal");
+      const legal = page.locator("footer .sf-legal");
       await expect(legal.getByRole("link")).toHaveText(["Privacy", "Terms"]);
       await expect(legal).toContainText("©");
       await expect(page.locator("footer")).not.toContainText("CC-BY-4.0");
@@ -34,20 +34,20 @@ test.describe("pages load", () => {
 });
 
 test.describe("home", () => {
-  test("the record line matches the data file", async ({ page }) => {
+  test("the figures on the home page match the data file", async ({ page }) => {
     await page.goto("/");
     const missed = records.filter((r) => r.status === "missed");
     const never = missed.filter((r) => !r.acknowledged_at).length;
     const met = records.filter((r) => r.status === "met").length;
     const line = page.getByTestId("headline");
     await expect(line.locator('[data-stat="rows"]')).toHaveText(records.length.toLocaleString("en-US"));
-    await expect(line.locator('[data-stat="resolved"]')).toHaveText((met + missed.length).toLocaleString("en-US"));
-    await expect(line.locator('[data-stat="met"]')).toHaveText(String(met));
     await expect(line.locator('[data-stat="missed"]')).toHaveText(String(missed.length));
     await expect(line.locator('[data-stat="never"]')).toHaveText(String(never));
-    await expect(line).toHaveText(
-      `${records.length.toLocaleString("en-US")} statements, ${(met + missed.length).toLocaleString("en-US")} resolved, ${met} met, ${missed.length} missed, ${never} never acknowledged`
-    );
+    await expect(line.locator('[data-stat="acknowledged"]')).toHaveText(String(records.filter((r) => r.acknowledged_at).length));
+    // Met and unresolved are in the unit chart's legend.
+    const legend = page.getByTestId("unit-chart");
+    await expect(legend.locator('[data-stat="met"]')).toHaveText(String(met));
+    await expect(legend.locator('[data-stat="unresolved"]')).toHaveText(String(records.filter((r) => r.status === "unresolved").length));
   });
 
   test("the detailed grid lives on the methodology page", async ({ page }) => {
@@ -129,7 +129,7 @@ test.describe("row page", () => {
     await expect(page.getByRole("heading", { name: "The acknowledgement" })).toBeVisible();
   });
 
-  test("a worse miss is red and a better miss is not", async ({ page }) => {
+  test("a worse miss is brick and a better miss is not", async ({ page }) => {
     // UNH FY2020 revenue: guided $260 to $262 billion, reported $257.1 billion, so worse than guided.
     const worse = records.find(
       (r) => r.ticker === "UNH" && r.status === "missed" && r.assumption.metric === "revenue" && r.assumption.target_period === "FY2020" && r.outcome.reported_value < r.assumption.target_low
@@ -137,7 +137,9 @@ test.describe("row page", () => {
     await page.goto(`/row/${worse.record_id}`);
     const badge = page.locator("dl.facts .status");
     await expect(badge).toHaveClass(/status-worse/);
-    await expect(badge).toHaveCSS("color", "rgb(185, 28, 28)");
+    // The word takes the lifted brick; its square is brick. Never scarlet.
+    await expect(badge).toHaveCSS("color", "rgb(255, 159, 148)");
+    await expect(badge.locator(".sw")).toHaveCSS("background-color", "rgb(180, 35, 24)");
 
     // NVDA revenue: higher is better, so only misses below the low end are red.
     const nv = records.filter((r) => r.ticker === "NVDA" && r.assumption.metric === "revenue" && r.status === "missed");
@@ -146,7 +148,11 @@ test.describe("row page", () => {
     expect(nv.length).toBeGreaterThan(nvWorse);
     await page.goto("/company/NVDA?metric=revenue");
     await expect(page.locator(".status-worse")).toHaveCount(nvWorse);
-    await expect(page.locator("tr[data-row] td", { hasText: /^better$/ })).toHaveCount(nv.length - nvWorse);
+    await expect(page.locator('tr[data-row] td[data-direction="better"]')).toHaveCount(nv.length - nvWorse);
+    await expect(page.locator('tr[data-row] td[data-direction="better"]').first()).toHaveText("missed, better");
+    // Better is green, worse is brick; neither square is scarlet.
+    await expect(page.locator("tr[data-row] .status-better .sw").first()).toHaveCSS("background-color", "rgb(95, 165, 127)");
+    await expect(page.locator("tr[data-row] .status-worse .sw").first()).toHaveCSS("background-color", "rgb(180, 35, 24)");
   });
 });
 
@@ -155,6 +161,9 @@ test.describe("compare", () => {
     await page.goto("/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025");
     await expect(page.locator("[data-compare-side]")).toHaveCount(2);
     await expect(page.locator("[data-compare-side]").first()).toContainText("Q1 FY2024");
+    // Headings step down in order: the page title, the chart section, then each chart.
+    const levels = await page.locator("main :is(h1, h2, h3)").evaluateAll((els) => els.map((e) => Number(e.tagName[1])));
+    levels.forEach((l, i) => i && expect(l - levels[i - 1]).toBeLessThanOrEqual(1));
     await expect(page.locator("[data-compare-side]").nth(1)).toContainText("Q1 FY2025");
     expect(await page.locator("a[data-edgar-link]").count()).toBeGreaterThanOrEqual(2);
   });

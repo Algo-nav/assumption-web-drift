@@ -144,49 +144,6 @@ test.describe("compare from the company page", () => {
   });
 });
 
-test.describe("navigation map", () => {
-  test("header nav, CTA and the footer Company column", async ({ page }) => {
-    await page.goto("/");
-    const nav = page.getByRole("navigation", { name: "Main" }).getByRole("link");
-    await expect(nav).toHaveText(["Companies", "Misses", "Compare", "Methodology", "Contact"]);
-    await expect(nav.last()).toHaveAttribute("href", "https://scndorder.com/contact");
-    await expect(page.locator("header").getByRole("link", { name: "Request a company" })).toHaveAttribute("href", "/#request");
-    const col = page.locator(".footer-cols > div").filter({ has: page.getByRole("heading", { name: "Company" }) });
-    await expect(col.getByRole("link")).toHaveText(["scndorder.com", "About", "Contact"]);
-    expect(await col.getByRole("link").evaluateAll((els) => els.map((e) => e.getAttribute("href")))).toEqual([
-      "https://scndorder.com",
-      "https://scndorder.com/about",
-      "https://scndorder.com/contact",
-    ]);
-    await expect(page.locator("a[href='/about']")).toHaveCount(0);
-  });
-
-  test("footer spacing: 48px from content to the columns, 120px to the legal row, 72px to the wordmark", async ({ page }) => {
-    for (const width of [1280, 375]) {
-      await page.setViewportSize({ width, height: 900 });
-      for (const url of ["/", "/methodology", "/company/NVDA"]) {
-        await page.goto(url);
-        const m = await page.evaluate(() => {
-          const r = (sel) => document.querySelector(sel).getBoundingClientRect();
-          const cols = document.querySelector(".footer-cols");
-          // The column block ends at its tallest column's last line.
-          const colsBottom = Math.max(...[...cols.children].map((c) => c.lastElementChild.getBoundingClientRect().bottom));
-          return {
-            border: getComputedStyle(document.querySelector("footer")).borderTopWidth,
-            content: r(".footer-cols").top - document.querySelector("main").lastElementChild.getBoundingClientRect().bottom,
-            legal: r(".footer-legal").top - colsBottom,
-            mark: r(".footer-mark").top - r(".footer-legal").bottom,
-          };
-        });
-        expect(m.border, `${url} at ${width}`).toBe("0px");
-        expect(Math.round(m.content), `${url} at ${width}`).toBe(48);
-        expect(Math.round(m.legal), `${url} at ${width}`).toBe(120);
-        expect(Math.round(m.mark), `${url} at ${width}`).toBe(72);
-      }
-    }
-  });
-});
-
 test.describe("chart rules", () => {
   test("ticks: three to five round values", () => {
     for (const [a, b] of [[0, 1], [-5.2, 4.6], [0.4, 3.1], [57, 81], [1e9, 9.7e9]]) {

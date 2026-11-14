@@ -111,7 +111,7 @@ test.describe("3. sectors", () => {
     await page.goto("/company/TGT");
     await expect(page.locator("main")).toContainText("consumer staples");
     await page.goto("/");
-    await expect(page.getByRole("link", { name: /Meta Platforms/ })).toContainText("communication services");
+    await expect(page.getByRole("list", { name: "Companies" }).getByRole("link", { name: /Meta Platforms/ })).toContainText("communication services");
   });
 });
 
@@ -159,12 +159,12 @@ test.describe("5. /misses", () => {
   };
   const worse = missed.filter(worseSide);
 
-  test("is in the nav between Companies and Compare, and the first tile links to it", async ({ page }) => {
+  test("is in the nav between Companies and Compare, and the missed figure links to it", async ({ page }) => {
     await page.goto("/");
-    const nav = await page.getByRole("navigation", { name: "Main" }).getByRole("link").allTextContents();
+    const nav = await page.locator(".nav-links a").allTextContents();
     expect(nav.slice(0, 3)).toEqual(["Companies", "Misses", "Compare"]);
-    await expect(page.locator('[data-tile="worse-never"]')).toHaveAttribute("href", "/misses");
-    await page.locator('[data-tile="worse-never"]').click();
+    await expect(page.locator('[data-tile="missed"]')).toHaveAttribute("href", "/misses");
+    await page.locator('[data-tile="missed"]').click();
     await expect(page).toHaveURL(/\/misses$/);
   });
 

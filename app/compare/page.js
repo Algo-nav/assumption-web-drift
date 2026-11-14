@@ -24,36 +24,36 @@ function Side({ row, count, letter }) {
     <div className="card stack-tight" data-compare-side>
       <div>
         <h2><span className="mono faint">{letter}</span> {row.period}</h2>
-        <p className="small" style={{ margin: "var(--s1) 0 0" }}>
+        <p className="small example-status">
           <StatusBadge status={row.status} direction={row.direction} />
           {row.direction ? <span> {row.direction} than guided</span> : null}
         </p>
       </div>
-      <p style={{ margin: 0, color: "var(--ink)" }}>{describeRow(row)}</p>
+      <p className="side-line">{describeRow(row)}</p>
       <dl className="facts">
         <dt>Guided</dt>
-        <dd className="figure">{formatGuidedShort(row.low, row.high, row.unit)}</dd>
+        <dd className="figure-sm">{formatGuidedShort(row.low, row.high, row.unit)}</dd>
         <dt>Stated</dt>
         <dd className="mono">{row.statedAt}</dd>
         <dt>Reported</dt>
-        <dd className={row.reported == null ? undefined : "figure"}>{row.reported == null ? "none yet" : formatValueShort(row.reported, row.unit)}</dd>
+        <dd className={row.reported == null ? undefined : "figure-sm"}>{row.reported == null ? "none yet" : formatValueShort(row.reported, row.unit)}</dd>
         <dt>Outcome date</dt>
         <dd className="mono">{row.reportedAt || "none"}</dd>
         <dt>Row</dt>
         <dd><Link href={`/row/${row.id}`} className="mono">{row.id}</Link></dd>
       </dl>
       {count > 1 ? (
-        <p className="small faint" style={{ margin: 0 }}>
+        <p className="small faint">
           {count} statements exist for this period. This is the one stated <span className="mono">{row.statedAt}</span>.
         </p>
       ) : null}
       <div>
-        <h3 style={{ marginBottom: "var(--s1)" }}>Guidance</h3>
+        <h3>Guidance</h3>
         <Excerpt evidence={row.guidance} />
       </div>
       <div>
-        <h3 style={{ marginBottom: "var(--s1)" }}>Outcome</h3>
-        {row.outcome ? <Excerpt evidence={row.outcome} /> : <p style={{ margin: 0 }}>No filing has reported this figure yet.</p>}
+        <h3>Outcome</h3>
+        {row.outcome ? <Excerpt evidence={row.outcome} /> : <p>No filing has reported this figure yet.</p>}
       </div>
     </div>
   );
@@ -95,7 +95,8 @@ export default async function ComparePage({ searchParams }) {
       {ready ? (
         <>
           {groups.length > 0 ? (
-            <section aria-label="Metric over time" className="stack-tight">
+            <section aria-labelledby="compare-chart-h" className="stack-tight">
+              <h2 id="compare-chart-h" className="sr-only">Metric over time</h2>
               <ChartKey />
               <div className="charts">
                 {groups.map((g) => <Chart key={g.key} group={g} highlight={marks} />)}
@@ -110,7 +111,7 @@ export default async function ComparePage({ searchParams }) {
       ) : (
         <div className="card empty">
           <h2>Nothing to compare yet</h2>
-          <p style={{ margin: 0 }}>
+          <p>
             {m || a || b
               ? "That combination has no statements. Pick a period from the lists above and press Compare."
               : "Choose a company, a metric and two periods above, then press Compare."}

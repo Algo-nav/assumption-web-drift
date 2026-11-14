@@ -47,7 +47,7 @@ export default function ComparePicker({ index, initial }) {
 
   const stmt = (list, value, set, id) =>
     list.length > 1 ? (
-      <select id={id} className="input" value={value} onChange={(e) => set(Number(e.target.value))} style={{ marginTop: "var(--s1)" }} aria-label="Statement">
+      <select id={id} className="field" value={value} onChange={(e) => set(Number(e.target.value))} aria-label="Statement">
         {list.map((s, i) => (
           <option key={s.id} value={i}>stated {s.statedAt}</option>
         ))}
@@ -59,7 +59,7 @@ export default function ComparePicker({ index, initial }) {
       <div className="fields fields-2">
         <div>
           <label className="label" htmlFor="cmp-company">Company</label>
-          <select id="cmp-company" className="input" value={t} onChange={(e) => changeCompany(e.target.value)}>
+          <select id="cmp-company" className="field" value={t} onChange={(e) => changeCompany(e.target.value)}>
             {tickers.map((k) => (
               <option key={k} value={k}>{index[k].name} ({k})</option>
             ))}
@@ -67,7 +67,7 @@ export default function ComparePicker({ index, initial }) {
         </div>
         <div>
           <label className="label" htmlFor="cmp-metric">Metric</label>
-          <select id="cmp-metric" className="input" value={m} onChange={(e) => changeMetric(t, e.target.value)}>
+          <select id="cmp-metric" className="field" value={m} onChange={(e) => changeMetric(t, e.target.value)}>
             {metrics.map((k) => (
               <option key={k} value={k}>{k}</option>
             ))}
@@ -75,7 +75,7 @@ export default function ComparePicker({ index, initial }) {
         </div>
         <div>
           <label className="label" htmlFor="cmp-a">First period</label>
-          <select id="cmp-a" className="input" value={a} onChange={(e) => { setA(e.target.value); setAi(0); }}>
+          <select id="cmp-a" className="field" value={a} onChange={(e) => { setA(e.target.value); setAi(0); }}>
             {periods.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
@@ -84,7 +84,7 @@ export default function ComparePicker({ index, initial }) {
         </div>
         <div>
           <label className="label" htmlFor="cmp-b">Second period</label>
-          <select id="cmp-b" className="input" value={b} onChange={(e) => { setB(e.target.value); setBi(0); }}>
+          <select id="cmp-b" className="field" value={b} onChange={(e) => { setB(e.target.value); setBi(0); }}>
             {periods.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
@@ -92,8 +92,8 @@ export default function ComparePicker({ index, initial }) {
           {stmt(listB, bi, setBi, "cmp-bi")}
         </div>
       </div>
-      <div style={{ marginTop: "var(--s2)" }}>
-        <button type="submit" className="btn btn-cta">Compare</button>
+      <div className="form-foot">
+        <button type="submit" className="btn solid">Compare</button>
       </div>
     </form>
   );

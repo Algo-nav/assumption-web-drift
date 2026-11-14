@@ -40,22 +40,22 @@ export default function RequestForm() {
   return (
     <form onSubmit={onSubmit} noValidate>
       {/* Honeypot: off-screen, skipped by keyboard and screen readers. */}
-      <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+      <div aria-hidden="true" className="honeypot">
         <label htmlFor="req-website">Leave this empty</label>
         <input id="req-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
       <div className="fields fields-3">
         <div>
           <label className="label" htmlFor="req-company">Company name or ticker</label>
-          <input id="req-company" name="company" className="input" required maxLength={120} />
+          <input id="req-company" name="company" className="field" required maxLength={120} />
         </div>
         <div>
           <label className="label" htmlFor="req-email">Email</label>
-          <input id="req-email" name="email" type="email" className="input" required maxLength={200} />
+          <input id="req-email" name="email" type="email" className="field" required maxLength={200} />
         </div>
         <div>
           <label className="label" htmlFor="req-role">Role</label>
-          <select id="req-role" name="role" className="input" defaultValue="" required>
+          <select id="req-role" name="role" className="field" defaultValue="" required>
             <option value="" disabled>Choose one</option>
             {REQUEST_ROLES.map((r) => (
               <option key={r} value={r}>{r}</option>
@@ -63,13 +63,19 @@ export default function RequestForm() {
           </select>
         </div>
       </div>
-      <div style={{ marginTop: "var(--s2)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--s2)" }}>
-        <button type="submit" className="btn btn-cta" disabled={state.phase === "sending"}>
+      <div className="request-foot">
+        <button type="submit" className="btn" disabled={state.phase === "sending"}>
           Request a company
         </button>
-        <p role="status" style={{ margin: 0, color: state.phase === "error" ? "var(--red)" : "var(--ink)" }}>
-          {state.message}
-        </p>
+        {/* The outcome is written as a record entry, as on the main site: a mono status line over the sentence. */}
+        <div role="status" className="request-out">
+          {state.message ? (
+            <div className={`entry ${state.phase === "error" ? "bad" : "ok"}`}>
+              <p className="entry-type">{state.phase === "error" ? "request, not recorded" : "request, recorded"}</p>
+              <p className="entry-body">{state.message}</p>
+            </div>
+          ) : null}
+        </div>
       </div>
     </form>
   );
