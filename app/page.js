@@ -45,13 +45,17 @@ export default function Home() {
 
   const worse = largestWorse(rows);
   const count = (fn) => rows.reduce((n, r) => n + (fn(r) ? 1 : 0), 0);
+  // The main site's four groups, in its order and with its labels, and withdrawn as a fifth of its own.
+  const unresolved = count((r) => r.status === "unresolved");
+  const withdrawn = count((r) => r.status === "withdrawn");
   const groups = [
-    { key: "met", stat: "met", label: "met", count: s.met },
-    { key: "acknowledged", stat: "acknowledged-squares", label: "missed, acknowledged", count: count((r) => r.status === "missed" && r.acknowledged) },
-    { key: "never", stat: "never-squares", label: "missed, never acknowledged", count: s.neverAcknowledged },
-    { key: "open", stat: "unresolved", label: "unresolved", count: count((r) => r.status === "unresolved") },
-    { key: "withdrawn", stat: "withdrawn", label: "withdrawn", count: count((r) => r.status === "withdrawn") },
+    { g: "met", stat: "met", label: "met", n: s.met },
+    { g: "acknowledged", stat: "acknowledged-squares", label: "missed and acknowledged", n: count((r) => r.status === "missed" && r.acknowledged) },
+    { g: "silent", stat: "never-squares", label: "missed and never acknowledged", n: s.neverAcknowledged },
+    { g: "open", stat: "unresolved", label: "still open", n: unresolved },
+    { g: "withdrawn", stat: "withdrawn", label: "withdrawn", n: withdrawn },
   ];
+  const unitNote = `On scndorder.com still open includes the withdrawn: ${fmt(unresolved + withdrawn)}.`;
 
   return (
     <div className="stack home">
@@ -101,9 +105,9 @@ export default function Home() {
         }
       >
         <section className="heat" aria-label="The dataset at a glance">
-          <div>
+          <div className="heat-chart">
             <h2 id="units-h">Every statement, one square</h2>
-            <UnitChart groups={groups} total={s.rows} />
+            <UnitChart groups={groups} total={s.rows} note={unitNote} />
           </div>
           <div className="card feed" data-testid="feed">
             <h2>Largest worse-side misses</h2>
@@ -164,7 +168,7 @@ export default function Home() {
             <ul className="small">
               <li><b>met</b>: the reported figure landed inside the guided range.</li>
               <li><b>missed</b>: it landed outside. A beat counts as a miss, so <b>direction</b> says whether the miss was better or worse than guided.</li>
-              <li><b>unresolved</b>: no filing has reported the figure yet.</li>
+              <li><b>still open</b>: no filing has reported the figure yet.</li>
               <li><b>acknowledged</b>: a later filing refers to the guided figure after the outcome. The test is strict, so it is rare.</li>
             </ul>
             <p className="small faint">

@@ -174,7 +174,7 @@ Each colour answers one question about a statement and is used for nothing else.
 | Conflict between sources | `amber` | #C27A12 | filled square. No current row carries one |
 | Acknowledged in a later filing | `scarlet`, hollow | #FF2400 | one-pixel outline, never filled |
 | Missed and never acknowledged (the count) | `scarlet` | #FF2400 | the figure, and its squares in the unit chart |
-| Still open: unresolved, no outcome filed yet | `powder-dim`, hollow; `powder` at 15% in the unit chart | #7F9CBF | hollow square, hollow bar |
+| Still open (the field value "unresolved"): no outcome filed yet | `powder-dim`, hollow; `powder` at 15% in the unit chart | #7F9CBF | hollow square, hollow bar |
 | Withdrawn | `powder-ink` | #55698A | filled square, bar |
 
 **The Worse Is Brick Rule.** A worse-side miss is brick. It is never scarlet, in a row, a bar or a chart. Scarlet says nobody acknowledged it, which is a different fact.
@@ -236,6 +236,8 @@ The navigation is full width at the top of the page and becomes a centred pill, 
 
 The company page is a rail and a column: filters in a 216px rail on the left, charts and the table on the right. The rail collapses to a 44px strip; below 1000px it sits above the column.
 
+A page that is read (the write-up, a row page) is one centred column at the main site's 680px measure, headings included; running text inside it keeps to about 72 characters. Tables in the write-up are centred on the column and may run to the full content width, and the figures in "The record in full" keep it.
+
 The company grid fills its row with as many 208px-minimum tiles as fit, so the same grid holds 15 companies or 50.
 
 At 390px every multi-column grid is one column (the company grid, two) and nothing overflows horizontally. Wide tables scroll inside their own box, with a hint.
@@ -282,10 +284,10 @@ The main site's component, copied. Wordmark left (to scndorder.com) with the pro
 The main site's component, copied: link columns, the legal row, and the wordmark fitted to the container on one line as the last thing on the page. Each letter rises once when the mark comes into view; the letter under the pointer goes scarlet.
 
 ### Unit chart
-One square per statement, in the order met, acknowledged, never acknowledged, still open. The legend beside it carries the counts in the same order and colour. Point at a legend entry and the other groups step back.
+The main site's unit chart, rule for rule: one 7-unit square per statement on a 10-unit pitch; the groups in its order (met, acknowledged, never acknowledged, still open) with the hollow group half a unit inside its cell; a mono legend carrying the counts in the same order and colour. The figure rises 32px once when it enters the viewport and the groups come up 200ms apart. Point at a figure (a legend count, or one of the four under the search) or at a group, and the other groups step back to 12%; still open rests at 15%, is never stepped below it, and its own figure lifts it to 60%. Beside the misses feed the chart and the feed are one row with a shared top and bottom edge and level heading baselines: the columns are computed so the grid fills its column's width and is as tall as the room above the legend, and the square size follows (alone in a column, or with scripting off, it keeps the main site's 1.68 proportion). Two differences from the main site: that fitting, and withdrawn statements are a fifth group of their own here, where the main site counts them in with still open, and a line under the legend says so.
 
 ### Charts
-One metric over time. A bar is the guided range on the date it was stated; a dot is the reported figure on the outcome date, joined to its bar by a thin line unless they touch. Three to five gridlines at round values. One tick per fiscal year, shared by every chart of a company. An unresolved statement is a hollow bar with no dot. When the axis is trimmed the chart says so and counts the points beyond it. When a rail filter is on, points that do not match are dimmed, not removed.
+One metric over time. A bar is the guided range on the date it was stated; a dot is the reported figure on the outcome date, joined to its bar by a thin line unless they touch. Three to five gridlines at round values. One tick per fiscal year, shared by every chart of a company. A still-open statement is a hollow bar with no dot. When the axis is trimmed the chart says so and counts the points beyond it. When a rail filter is on, points that do not match are dimmed, not removed.
 
 ### Logos
 A brand symbol where the brand has one, a wordmark otherwise, scaled to fit a height and a width and never stretched. A logo that would fit under 14px tall is replaced by a monogram: the first two letters of the ticker, ink on powder. Every logo and monogram sits on a powder plate.
@@ -305,7 +307,7 @@ A brand symbol where the brand has one, a wordmark otherwise, scaled to fit a he
 - **Don't** put white text on scarlet; it fails contrast.
 - **Don't** use gradients on backgrounds or on text.
 - **Don't** put a border on one side of a card.
-- **Don't** add grain, a canvas or a scroll reveal to a data page.
+- **Don't** add grain, a canvas or a scroll reveal to a data page. The unit chart's reveal is the main site's and is the one exception.
 - **Don't** invent a fact, and do not round one.
 
 ## Changes against the main site
@@ -317,7 +319,8 @@ The main site wins wherever it and the prototype disagree. These are the places 
 - **Nav:** this site's links; the wordmark goes to scndorder.com and the product label beside it goes home; the route comes from `usePathname` because the nav sits in the layout; the button steps aside for `#request` instead of `#access`; the links collapse at 1080px instead of 820px. The panel's links are 12px apart instead of 16px so seven of them fit a short screen.
 - **Footer:** this site's lead sentence and links; the lead button is the ghost "Request a company"; no cookie settings link, because this site sets no cookies.
 - **Field edge** is powder dim, not the 40% line: the 40% line reaches 2.8:1 against navy and navy raised, under the 3:1 a control's edge needs.
-- **No grain, no reveals, no paper sheet.** The footer wordmark's rise is the one scroll behaviour, because it is the footer's.
+- **No grain, no paper sheet.** Two things reveal on scroll, both the main site's own: the footer wordmark and the unit chart.
+- **Nav on first load.** The first script in `<body>` reads the scroll position before the nav's markup exists and writes `html[data-nav]`; the compact rules read it until the component mounts, and nothing in the nav animates for the first 300ms. A page that loads already scrolled paints the pill in its first frame. The main site sets the state after hydration.
 - **Table figures** are 13px mono, the one size off the scale (see Typography).
 - **The inline script** that marks `html[data-js]` carries the page's CSP nonce.
 

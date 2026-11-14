@@ -43,7 +43,7 @@ The pilot is the method shown in public before anyone is asked for trust. The ma
 - The product name assumption-drift is written lower case with a hyphen.
 - Aspekta (self-hosted) is the one heading and body face. IBM Plex Mono for figures, dates, ids and captions.
 - Sentence case. Plain statements; no superlatives. A beat counts as a miss, and the page says which way it missed.
-- The status names are the dataset's: met, missed, unresolved, withdrawn. "Still open" is the main site's wording for unresolved and is not used in a table here.
+- The status names are the dataset's: met, missed, unresolved, withdrawn. The value "unresolved" is shown as "still open", the main site's wording, everywhere on this site; the field value stays "unresolved" in URLs and in the data, and the write-up on /methodology keeps its own definition.
 
 ## Evidence on Hand
 

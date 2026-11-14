@@ -10,6 +10,9 @@ main { position: relative; color: var(--powder); }
 
 .stack > * + * { margin-top: var(--s600); }
 .stack-tight > * + * { margin-top: var(--s200); }
+/* A page that is read, not scanned (the write-up, a row): one centred column at the main site's 680px measure.
+   A block marked .wide keeps the full content width. */
+.reading > :not(.wide) { width: 100%; max-width: 680px; margin-inline: auto; }
 
 /* Headings take the named steps: page title heading-3, section heading-6, item title-3. */
 main h1 { color: var(--powder-2); font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
@@ -306,7 +309,12 @@ main h1.heading-2 { font-size: 48px; line-height: 48px; letter-spacing: -.02em; 
 .chart .pick-label { fill: var(--powder-2); font-weight: 500; }
 
 /* ---------- methodology ---------- */
-.prose { color: var(--powder); overflow-wrap: anywhere; }
+/* The write-up sits in the same centred 680px column, headings included. The article itself spans the content
+   width so that its tables and code can run wider than the column: they are centred, and never narrower than it. */
+.prose { color: var(--powder); overflow-wrap: anywhere; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 680px) minmax(0, 1fr); }
+.reading > .prose { max-width: none; }
+.prose > * { grid-column: 2; min-width: 0; }
+.prose > :is(table, pre) { grid-column: 1 / -1; justify-self: center; min-width: min(680px, 100%); }
 .prose h1 { margin-bottom: var(--s200); }
 .prose h2 { margin: var(--s600) 0 var(--s100); font-size: 24px; line-height: 32px; }
 .prose h3 { margin: var(--s300) 0 var(--s75); font-weight: 600; }
@@ -326,7 +334,7 @@ main h1.heading-2 { font-size: 48px; line-height: 48px; letter-spacing: -.02em; 
 .prose strong { font-weight: 600; color: var(--powder-2); }
 .prose blockquote { margin: 0 0 var(--s200); padding: var(--s200); border: 1px solid var(--line-2); color: var(--powder-2); }
 .prose pre { margin: 0 0 var(--s200); padding: var(--s200); overflow-x: auto; background: var(--navy-2); border-radius: 8px; }
-.note { margin: 0; max-width: 34rem; }
+.note { margin: 0; }
 
 .stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s400) var(--s300); }
 @media (min-width: 768px) { .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
@@ -372,36 +380,63 @@ main h1.heading-2 { font-size: 48px; line-height: 48px; letter-spacing: -.02em; 
 }
 
 /* The dataset at a glance: every statement as a square, beside the largest worse-side misses. */
-.heat { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--s600); align-items: start; }
-@media (max-width: 1000px) { .heat { grid-template-columns: minmax(0, 1fr); gap: var(--s500); } }
+/* One row: the two columns share a top edge and a bottom edge. The feed card sets the height; the chart column
+   is stretched to it, and its heading starts where the card's does (the card's own padding). */
+.heat { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--s600); align-items: stretch; }
+.heat-chart { display: flex; flex-direction: column; min-width: 0; padding-top: var(--s300); }
+.heat-chart .units { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+/* Fitted (UnitChart sets data-fit when the feed is beside it): the plot takes whatever height the row leaves
+   above the legend and contributes none of its own, so the feed alone decides how tall the row is. The grid is
+   drawn from the plot's top; the legend sits at the bottom of the box. */
+.units[data-fit] .units-plot { flex: 1 1 0; min-height: 0; position: relative; }
+.units[data-fit] .units-plot svg { position: absolute; left: 0; top: 0; }
+@media (max-width: 1000px) {
+  .heat { grid-template-columns: minmax(0, 1fr); gap: var(--s500); }
+  .heat-chart { padding-top: 0; }
+}
+/* The unit chart is the main site's (landing.css, "assumption-drift: the public proof"), rule for rule. */
 .units { margin: var(--s200) 0 0; }
 .units svg { display: block; width: 100%; height: auto; overflow: visible; }
-.units path { transition: opacity .3s var(--ease); }
+/* one grain per statement; the groups come up in turn once the figure is in view */
+.units path { transition: opacity .7s var(--ease); }
+html[data-js] .units:not(.in) path { opacity: 0; }
 .units path[data-g="met"] { fill: var(--powder); }
-.units path[data-g="acknowledged"] { fill: none; stroke: var(--red); stroke-width: 1px; vector-effect: non-scaling-stroke; }
-.units path[data-g="never"] { fill: var(--red); }
-.units path[data-g="open"] { fill: var(--powder); opacity: .15; }
-.units path[data-g="withdrawn"] { fill: var(--powder-4); }
-.units-legend { display: flex; flex-wrap: wrap; gap: var(--s75) var(--s300); margin: var(--s200) 0 0; padding: 0; list-style: none; font-size: 14px; line-height: 20px; color: var(--powder-3); }
-.units-legend li { display: flex; align-items: center; gap: var(--s75); cursor: default; }
+.units path[data-g="acknowledged"] { fill: none; stroke: var(--red); stroke-width: 1px; vector-effect: non-scaling-stroke; transition-delay: .2s; }
+.units path[data-g="silent"] { fill: var(--red); transition-delay: .4s; }
+.units path[data-g="open"] { fill: var(--powder); opacity: .15; transition-delay: .6s; }
+/* The fifth group, which the main site folds into the fourth. */
+.units path[data-g="withdrawn"] { fill: var(--powder-4); transition-delay: .8s; }
+.units-legend { display: flex; flex-wrap: wrap; gap: var(--s75) var(--s300); margin: var(--s300) 0 0; padding: 0; list-style: none; color: var(--powder-3); }
+.units-legend li { display: flex; align-items: center; gap: var(--s75); }
 .units-legend b { font-weight: 400; color: var(--powder-2); }
-.units-legend i { flex: none; width: 8px; height: 8px; background: var(--powder); }
+.units-legend i { flex: none; width: 7px; height: 7px; background: var(--powder); }
 .units-legend [data-g="acknowledged"] i { background: transparent; box-shadow: inset 0 0 0 1px var(--red); }
-.units-legend [data-g="never"] i { background: var(--red); }
+.units-legend [data-g="silent"] i { background: var(--red); }
 .units-legend [data-g="open"] i { opacity: .15; }
 .units-legend [data-g="withdrawn"] i { background: var(--powder-4); }
-/* Point at a legend entry and the rest of the chart steps back. Unresolved rests at 15% and is never stepped
-   below it: it is left out of every step-back, and its own entry raises it instead. */
+.units-note { margin: var(--s100) 0 0; color: var(--powder-3); }
+/* Point at a figure or a group and the rest of the chart steps back. Still open rests at 15% and is never
+   stepped below it: it is left out of every step-back, and its own figure raises it instead. The figures are
+   the legend's counts and the four under the search (missed is the two scarlet groups together). */
 @media (hover: hover) {
-  .units:has(li[data-g="met"]:hover) path:not([data-g="met"], [data-g="open"]),
-  .units:has(li[data-g="acknowledged"]:hover) path:not([data-g="acknowledged"], [data-g="open"]),
-  .units:has(li[data-g="never"]:hover) path:not([data-g="never"], [data-g="open"]),
-  .units:has(li[data-g="withdrawn"]:hover) path:not([data-g="withdrawn"], [data-g="open"]),
-  .units:has(li[data-g="open"]:hover) path:not([data-g="open"]) { opacity: .12; }
-  .units:has(li[data-g="open"]:hover) path[data-g="open"] { opacity: .6; }
+  .units.in:has(li[data-g="met"]:hover) path:not([data-g="met"], [data-g="open"]),
+  .units.in:has(li[data-g="acknowledged"]:hover) path:not([data-g="acknowledged"], [data-g="open"]),
+  .units.in:has(li[data-g="silent"]:hover) path:not([data-g="silent"], [data-g="open"]),
+  .units.in:has(li[data-g="withdrawn"]:hover) path:not([data-g="withdrawn"], [data-g="open"]),
+  .units.in:has(li[data-g="open"]:hover) path:not([data-g="open"]),
+  .units.in:has(path[data-g="silent"]:hover) path:not([data-g="silent"], [data-g="open"]),
+  .units.in:has(path[data-g="acknowledged"]:hover) path:not([data-g="acknowledged"], [data-g="open"]),
+  .units.in:has(path[data-g="met"]:hover) path:not([data-g="met"], [data-g="open"]),
+  .units.in:has(path[data-g="withdrawn"]:hover) path:not([data-g="withdrawn"], [data-g="open"]),
+  .units.in:has(path[data-g="open"]:hover) path:not([data-g="open"]),
+  .home:has([data-tile="missed"]:hover) .units.in path:not([data-g="acknowledged"], [data-g="silent"], [data-g="open"]),
+  .home:has([data-tile="never"]:hover) .units.in path:not([data-g="silent"], [data-g="open"]),
+  .home:has([data-tile="acknowledged"]:hover) .units.in path:not([data-g="acknowledged"], [data-g="open"]) { opacity: .12; transition-delay: 0s; transition-duration: .3s; }
+  .units.in:has(li[data-g="open"]:hover) path[data-g="open"] { opacity: .6; transition-delay: 0s; transition-duration: .3s; }
 }
 
-.feed h2 { font-size: 16px; line-height: 24px; }
+/* The same step as the chart's heading beside it, so the two baselines are level. */
+.feed h2 { font-size: 20px; line-height: 28px; }
 .feed-by { margin: var(--s50) 0 var(--s100); font-size: 14px; line-height: 20px; color: var(--powder-3); }
 .feed ol { margin: 0; padding: 0; list-style: none; }
 .feed li { box-shadow: inset 0 1px 0 var(--line); }

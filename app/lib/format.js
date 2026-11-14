@@ -132,3 +132,10 @@ export function formatByShort(n, unit) {
   if (n == null) return "";
   return unit === "percent" ? `${num(n)} points` : oneShort(n, unit);
 }
+
+// The word shown for a status. The dataset's field value "unresolved" is shown as "still open", the main site's
+// wording; every other status is shown under its own name. The field value itself (URLs, data attributes, the
+// write-up's definition) is never changed.
+export function statusLabel(status) {
+  return status === "unresolved" ? "still open" : status;
+}

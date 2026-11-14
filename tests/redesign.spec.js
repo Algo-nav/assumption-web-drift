@@ -74,11 +74,13 @@ test.describe("home", () => {
 
   test("the unit chart draws one square per statement and its legend carries the counts", async ({ page }) => {
     await page.goto("/");
+    await page.getByTestId("unit-chart").scrollIntoViewIfNeeded();
+    await expect(page.getByTestId("unit-chart")).toHaveClass(/\bin\b/);
     const n = (fn) => records.filter(fn).length;
     const want = {
       met: n((r) => r.status === "met"),
       acknowledged: n((r) => r.status === "missed" && r.acknowledged_at),
-      never: n((r) => r.status === "missed" && !r.acknowledged_at),
+      silent: n((r) => r.status === "missed" && !r.acknowledged_at),
       open: n((r) => r.status === "unresolved"),
       withdrawn: n((r) => r.status === "withdrawn"),
     };
@@ -92,10 +94,126 @@ test.describe("home", () => {
     // Data colours: met is powder, never acknowledged is scarlet, acknowledged is a hollow scarlet outline.
     const css = (key, prop) => chart.locator(`path[data-g="${key}"]`).evaluate((el, prop) => getComputedStyle(el)[prop], prop);
     expect(await css("met", "fill")).toBe("rgb(188, 211, 234)");
-    expect(await css("never", "fill")).toBe("rgb(255, 36, 0)");
+    expect(await css("silent", "fill")).toBe("rgb(255, 36, 0)");
     expect(await css("acknowledged", "fill")).toBe("none");
     expect(await css("acknowledged", "stroke")).toBe("rgb(255, 36, 0)");
-    expect(await css("open", "opacity")).toBe("0.15");
+    await expect.poll(() => css("open", "opacity"), { timeout: 5000 }).toBe("0.15");
+    // The main site's geometry: 7-unit squares on a 10-unit pitch, the groups in its order with withdrawn
+    // after them, and the hollow group half a unit inside its cell. The number of columns is fitted (below).
+    const cols = Number(await chart.getAttribute("data-cols"));
+    const rows = Math.ceil(records.length / cols);
+    await expect(chart.locator("svg")).toHaveAttribute("viewBox", `0 0 ${cols * 10 - 3} ${rows * 10 - 3}`);
+    expect(await chart.locator("path").evaluateAll((els) => els.map((e) => e.dataset.g))).toEqual(["met", "acknowledged", "silent", "open", "withdrawn"]);
+    expect(await chart.locator('path[data-g="met"]').getAttribute("d")).toMatch(/^M0 0h7v7h-7zM10 0h7v7h-7z/);
+    expect(await chart.locator('path[data-g="acknowledged"]').getAttribute("d")).toMatch(/h6v6h-6z/);
+    // The legend is mono, in the main site's words, and says where the two sites differ.
+    await expect(chart.locator(".units-legend li")).toHaveText([/ met$/, / missed and acknowledged$/, / missed and never acknowledged$/, / still open$/, / withdrawn$/]);
+    expect(await chart.locator(".units-legend").evaluate((e) => getComputedStyle(e).fontFamily)).toMatch(/Plex Mono/i);
+    await expect(page.getByTestId("unit-note")).toHaveText(`On scndorder.com still open includes the withdrawn: ${want.open + want.withdrawn}.`);
+  });
+
+  test("the unit chart and the feed are one row: level headings, one bottom edge, squares sized to fill the box", async ({ page }) => {
+    for (const width of [1280, 1440, 1100]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/");
+      const chart = page.getByTestId("unit-chart");
+      await chart.scrollIntoViewIfNeeded();
+      await expect(chart).toHaveAttribute("data-fit", "");
+      const m = await page.evaluate(() => {
+        const r = (sel) => document.querySelector(sel).getBoundingClientRect();
+        const baseline = (el) => {
+          const probe = document.createElement("span");
+          probe.style.cssText = "display:inline-block;width:0;height:0";
+          el.appendChild(probe);
+          const y = probe.getBoundingClientRect().bottom;
+          probe.remove();
+          return y;
+        };
+        const chart = document.querySelector('[data-testid="unit-chart"]');
+        const svg = chart.querySelector("svg").getBoundingClientRect();
+        const caption = chart.querySelector("figcaption").getBoundingClientRect();
+        const cols = Number(chart.dataset.cols);
+        return {
+          col: r(".heat-chart"), feed: r(".feed"), svg, caption, cols,
+          plot: r(".units-plot"),
+          baselines: [baseline(document.querySelector("#units-h")), baseline(document.querySelector(".feed h2"))],
+          pitch: (svg.width / (cols * 10 - 3)) * 10,
+        };
+      });
+      // Shared top and bottom edge; heading baselines level.
+      expect(Math.abs(m.col.top - m.feed.top), `top at ${width}`).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(m.col.bottom - m.feed.bottom), `bottom at ${width}`).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(m.baselines[0] - m.baselines[1]), `baselines at ${width}`).toBeLessThanOrEqual(0.5);
+      // The grid fills the column's width, and is as tall as the room above the legend: less than one row short.
+      expect(Math.abs(m.svg.width - m.col.width)).toBeLessThanOrEqual(0.5);
+      expect(m.svg.bottom).toBeLessThanOrEqual(m.plot.bottom + 0.5);
+      expect(m.plot.bottom - m.svg.bottom).toBeLessThan(m.pitch + 1);
+      // The legend is under the chart, inside the same box: it ends where the feed card ends.
+      expect(m.caption.top).toBeGreaterThanOrEqual(m.svg.bottom);
+      expect(Math.abs(m.caption.bottom - m.feed.bottom)).toBeLessThanOrEqual(0.5);
+    }
+    // One column of page: no box to fill, so the main site's proportion.
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    const chart = page.getByTestId("unit-chart");
+    await expect(chart).not.toHaveAttribute("data-fit");
+    await expect(chart).toHaveAttribute("data-cols", String(Math.round(Math.sqrt(records.length * 1.68))));
+  });
+
+  test("the interface says still open; the field value stays unresolved", async ({ page }) => {
+    await page.goto("/company/NVDA");
+    const pill = page.getByRole("group", { name: "Status" }).getByRole("link", { name: "Still open", exact: true });
+    await expect(pill).toHaveAttribute("href", /status=unresolved/);
+    await expect(page.locator(".chart-key")).toContainText("still open");
+    await pill.click();
+    await expect(page).toHaveURL(/status=unresolved/);
+    const n = records.filter((r) => r.ticker === "NVDA" && r.status === "unresolved").length;
+    await expect(page.locator("tr[data-row] .status-open")).toHaveCount(n);
+    await expect(page.locator("tr[data-row] .status-open").first()).toHaveText("still open");
+    await expect(page.locator('[data-chart] [data-point][data-status="unresolved"]').first()).toHaveAttribute("aria-label", /still open$/);
+    // No page of the site shows the word, except the write-up, which is the dataset's own text.
+    for (const url of ["/", "/company/NVDA", "/misses", "/compare?t=NVDA&m=revenue&a=Q1%20FY2024&b=Q1%20FY2025"]) {
+      await page.goto(url);
+      expect(await page.locator("body").innerText(), url).not.toMatch(/unresolved/i);
+    }
+  });
+
+  test("the unit chart reveals once in view, and hovering a figure steps the other groups back", async ({ page }) => {
+    await page.goto("/");
+    const chart = page.getByTestId("unit-chart");
+    const opacities = () =>
+      chart.locator("path").evaluateAll((paths) => Object.fromEntries(paths.map((p) => [p.dataset.g, getComputedStyle(p).opacity])));
+    // The groups come up in turn, 200ms apart, as on the main site.
+    expect(await chart.locator("path").evaluateAll((els) => els.map((e) => getComputedStyle(e).transitionDelay))).toEqual(["0s", "0.2s", "0.4s", "0.6s", "0.8s"]);
+    await chart.scrollIntoViewIfNeeded();
+    const rest = { met: "1", acknowledged: "1", silent: "1", open: "0.15", withdrawn: "1" };
+    await expect.poll(opacities, { timeout: 5000 }).toEqual(rest);
+
+    const figure = (g) => chart.locator(`.units-legend li[data-g="${g}"]`);
+    // Hovering "still open" lifts it to 60% and steps everything else back.
+    await figure("open").hover();
+    await expect.poll(opacities, { timeout: 5000 }).toEqual({ met: "0.12", acknowledged: "0.12", silent: "0.12", open: "0.6", withdrawn: "0.12" });
+    // Every other figure leaves unresolved at its resting 15%.
+    await figure("met").hover();
+    await expect.poll(opacities, { timeout: 5000 }).toEqual({ met: "1", acknowledged: "0.12", silent: "0.12", open: "0.15", withdrawn: "0.12" });
+    await figure("silent").hover();
+    await expect.poll(opacities, { timeout: 5000 }).toEqual({ met: "0.12", acknowledged: "0.12", silent: "1", open: "0.15", withdrawn: "0.12" });
+    await figure("withdrawn").hover();
+    await expect.poll(opacities, { timeout: 5000 }).toEqual({ met: "0.12", acknowledged: "0.12", silent: "0.12", open: "0.15", withdrawn: "1" });
+    // The missed figure under the search is the two scarlet groups together.
+    await page.locator('[data-tile="missed"]').hover();
+    await expect.poll(opacities, { timeout: 5000 }).toEqual({ met: "0.12", acknowledged: "1", silent: "1", open: "0.15", withdrawn: "0.12" });
+    // Pointing at a group in the chart does the same; pointing at unresolved squares does not lift them.
+    for (const g of ["met", "silent", "open"]) {
+      const at = await chart.locator(`path[data-g="${g}"]`).evaluate((p) => {
+        const [, x, y] = p.getAttribute("d").match(/^M([\d.]+) ([\d.]+)/);
+        const m = p.getScreenCTM();
+        return { x: m.a * (Number(x) + 3) + m.e, y: m.d * (Number(y) + 3) + m.f };
+      });
+      await page.mouse.move(at.x, at.y);
+      await expect.poll(async () => (await opacities()).open, { timeout: 5000 }).toBe("0.15");
+      await expect.poll(async () => (await opacities())[g], { timeout: 5000 }).toBe(g === "open" ? "0.15" : "1");
+    }
   });
 
   test("the feed lists the four largest worse-side misses by percent beyond the range, in brick, and links to Misses", async ({ page }) => {

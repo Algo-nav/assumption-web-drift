@@ -1,4 +1,4 @@
-import { formatGuided, formatValue } from "./format.js";
+import { formatGuided, formatValue, statusLabel } from "./format.js";
 import { fiscalYearEnd } from "./data/fiscal.js";
 
 // Turns a company's rows into chart groups: one group per metric, period length and unit family.
@@ -57,7 +57,7 @@ export function chartGroups(rows) {
 
 function formatLine(r) {
   const rep = r.reported == null ? "no outcome yet" : `reported ${formatValue(r.reported, r.unit)}`;
-  return `${formatGuided(r.low, r.high, r.unit)} (${r.statedAt}), ${rep}${r.status ? `, ${r.status}` : ""}${r.direction ? `, ${r.direction}` : ""}`;
+  return `${formatGuided(r.low, r.high, r.unit)} (${r.statedAt}), ${rep}${r.status ? `, ${statusLabel(r.status)}` : ""}${r.direction ? `, ${r.direction}` : ""}`;
 }
 
 // Round tick values inside [min, max], three to five of them: steps of 1, 2, 2.5 or 5 times a power of ten,

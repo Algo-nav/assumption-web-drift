@@ -198,7 +198,7 @@ test.describe("row page, 404 and scarlet", () => {
     await page.goto("/");
     // The nav button and the form's button; the never-acknowledged figure; its squares and the hollow
     // acknowledged squares in the unit chart, with their legend marks.
-    expect((await scarlet(page)).sort()).toEqual(["btn", "btn sm", "i:acknowledged", "i:never", "mono", "path:acknowledged", "path:never"]);
+    expect((await scarlet(page)).sort()).toEqual(["btn", "btn sm", "i:acknowledged", "i:silent", "mono", "path:acknowledged", "path:silent"]);
     await expect(page.locator('[data-tile="never"] .mono')).toHaveCSS("color", SCARLET);
     // A company page and Misses carry worse rows; the only scarlet is the nav button.
     for (const url of ["/company/NVDA", "/misses"]) {

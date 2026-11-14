@@ -24,7 +24,7 @@ const STATUS_PILLS = [
   ["missed", "Missed", (r) => r.status === "missed"],
   ["worse", "Missed, worse", (r) => r.status === "missed" && r.direction === "worse"],
   ["acknowledged", "Acknowledged", (r) => r.acknowledged],
-  ["unresolved", "Unresolved", (r) => r.status === "unresolved"],
+  ["unresolved", "Still open", (r) => r.status === "unresolved"],
   ["withdrawn", "Withdrawn", (r) => r.status === "withdrawn"],
 ];
 

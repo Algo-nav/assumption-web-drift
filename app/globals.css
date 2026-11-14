@@ -165,6 +165,13 @@ em, i, cite, address { font-style: normal; }
 }
 .plate:active { transform: scale(.99); }
 
+/* ---------- reveals: rise 32px and fade, once ---------- */
+/* The main site's rule, kept for the one thing on this site that reveals: the unit chart. Hidden only once the
+   inline script in layout.js has marked <html data-js>: with scripting off or blocked, everything is simply
+   visible. */
+[data-reveal] { transition: opacity .7s var(--ease) var(--d, 0ms), transform .7s var(--ease) var(--d, 0ms); }
+html[data-js] [data-reveal]:not(.in) { opacity: 0; transform: translateY(32px); }
+
 /* ---------- navigation ---------- */
 .nav-sentinel { position: absolute; top: 0; left: 0; width: 1px; height: 80px; pointer-events: none; }
 .navwrap {
@@ -180,12 +187,16 @@ em, i, cite, address { font-style: normal; }
   position: absolute; inset: 0; z-index: -1;
   background: var(--nav-surface); box-shadow: inset 0 0 0 1px var(--line); backdrop-filter: blur(14px);
 }
+/* Before the component mounts the state is html[data-nav], written by the first script in <body>; after it,
+   the wrapper's own data-compact. Every compact rule below reads both. And until then motion has not set the
+   surface's opacity (the server renders it at 0), so the compact surface is shown here. */
+html[data-nav="compact"]:not([data-nav-live]) .nav-bg { opacity: 1 !important; }
 .nav-brand { display: flex; align-items: center; gap: var(--s75); }
 .nav-mark { display: block; font-size: 14px; line-height: 20px; color: var(--powder-2); white-space: nowrap; padding: var(--s75) var(--s75) var(--s75) 0; }
 /* The product label sits beside the wordmark on the full-width bar and is dropped from the pill. */
 .nav-label { display: block; padding: var(--s75) 0; font: 400 12px/20px var(--mono); color: var(--powder-3); white-space: nowrap; }
 .nav-label:hover { color: var(--powder-2); }
-.navwrap[data-compact="true"] .nav-label { display: none; }
+:is(.navwrap[data-compact="true"], html[data-nav="compact"]:not([data-nav-live]) .navwrap) .nav-label { display: none; }
 .nav-links { display: flex; gap: var(--s75); margin: 0 0 0 auto; padding: 0; list-style: none; }
 .nav-links a {
   position: relative; isolation: isolate; display: block; white-space: nowrap;
@@ -201,11 +212,11 @@ em, i, cite, address { font-style: normal; }
 /* while the request form is on screen its own button is the one scarlet button */
 .nav-cta[data-away="true"] { opacity: 0; pointer-events: none; }
 
-.navwrap[data-compact="true"] .nav {
+:is(.navwrap[data-compact="true"], html[data-nav="compact"]:not([data-nav-live]) .navwrap) .nav {
   width: auto; max-width: 100%; margin-top: var(--s200);
   padding: var(--s75) var(--s75) var(--s75) var(--s200);
 }
-.navwrap[data-compact="true"] .nav-links { margin-left: 0; }
+:is(.navwrap[data-compact="true"], html[data-nav="compact"]:not([data-nav-live]) .navwrap) .nav-links { margin-left: 0; }
 
 .nav-menu {
   display: none; position: relative; width: 40px; height: 40px; margin-left: auto;
@@ -238,10 +249,10 @@ em, i, cite, address { font-style: normal; }
   .nav-links, .nav-cta { display: none; }
   .nav-menu { display: block; }
   .nav { padding: var(--s200) 0; }
-  .navwrap[data-compact="true"] .nav { width: 100%; gap: var(--s75); padding: var(--s50) var(--s50) var(--s50) var(--s200); margin-top: var(--s100); }
+  :is(.navwrap[data-compact="true"], html[data-nav="compact"]:not([data-nav-live]) .navwrap) .nav { width: 100%; gap: var(--s75); padding: var(--s50) var(--s50) var(--s50) var(--s200); margin-top: var(--s100); }
   /* once the hero has scrolled away, the pill carries the ask */
-  .navwrap[data-compact="true"] .nav-cta { display: block; margin-left: auto; }
-  .navwrap[data-compact="true"] .nav-menu { margin-left: 0; }
+  :is(.navwrap[data-compact="true"], html[data-nav="compact"]:not([data-nav-live]) .navwrap) .nav-cta { display: block; margin-left: auto; }
+  :is(.navwrap[data-compact="true"], html[data-nav="compact"]:not([data-nav-live]) .navwrap) .nav-menu { margin-left: 0; }
 }
 @media (min-width: 1081px) { .nav-panel { display: none; } }
 
@@ -330,7 +341,7 @@ select.field { appearance: none; padding-right: var(--s500); background-image: u
 
 /* ---------- reduced motion: movement drops to a plain opacity change ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .nav-panel li, .sf-mark-run i { transform: none !important; transition: opacity .4s var(--ease); }
+  [data-reveal], .nav-panel li, .sf-mark-run i { transform: none !important; transition: opacity .4s var(--ease); }
   .btn, .plate, .skip, .nav-menu i { transition: opacity .3s var(--ease); }
   .btn:active, .plate:active, .plate:hover { transform: none; }
   .skip { transform: none; opacity: 0; }

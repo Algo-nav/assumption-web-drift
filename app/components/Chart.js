@@ -122,7 +122,7 @@ export function ChartKey() {
       <span><i className="sw met" />met</span>
       <span><i className="sw better" />missed, better</span>
       <span><i className="sw worse" />missed, worse</span>
-      <span><i className="key-open" />unresolved</span>
+      <span><i className="key-open" />still open</span>
       <span><i className="sw withdrawn" />withdrawn</span>
     </div>
   );

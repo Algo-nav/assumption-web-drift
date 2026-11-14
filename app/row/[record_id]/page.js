@@ -21,7 +21,7 @@ export default async function RowPage({ params }) {
   const { prev, next, position, total } = getNeighbours(r);
 
   return (
-    <div className="stack">
+    <div className="stack reading">
       <section>
         <p className="crumb">
           <Link href={`/company/${r.ticker}`}>{r.company}</Link>

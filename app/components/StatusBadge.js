@@ -1,5 +1,7 @@
+import { statusLabel } from "../lib/format";
+
 // A status is a square in its data colour and the status name: powder met, green better, brick worse, a hollow
-// square for unresolved. `joined` adds the direction to the name ("missed, worse") where a table has no
+// square for still open (the field value "unresolved"). `joined` adds the direction to the name ("missed, worse") where a table has no
 // direction column of its own.
 function toneOf(status, direction) {
   if (status === "met") return "met";
@@ -14,7 +16,7 @@ export function StatusBadge({ status, direction, joined = false }) {
   return (
     <span className={`status${tone ? ` status-${tone}` : ""}`}>
       {tone ? <i className={`sw ${tone}`} aria-hidden="true" /> : null}
-      {joined && direction ? `${status}, ${direction}` : status}
+      {joined && direction ? `${statusLabel(status)}, ${direction}` : statusLabel(status)}
     </span>
   );
 }

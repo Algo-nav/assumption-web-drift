@@ -12,13 +12,13 @@ export default function Methodology() {
   const fmt = (n) => n.toLocaleString("en-US");
   const pct = s.neverAcknowledgedShare == null ? "n/a" : `${(s.neverAcknowledgedShare * 100).toFixed(1)}%`;
   return (
-    <div className="stack">
+    <div className="stack reading">
       <p className="card small note">
         This is the write-up published with the dataset. The counts in it were taken when it was written.
         The counts in the grid at the foot of this page and on the home page are computed from the release file this site is serving.
       </p>
-      <article className="card prose" dangerouslySetInnerHTML={{ __html: html }} />
-      <section className="band" aria-labelledby="numbers">
+      <article className="prose" dangerouslySetInnerHTML={{ __html: html }} />
+      <section className="band wide" aria-labelledby="numbers">
         <div className="section-head">
           <h2 id="numbers">The record in full</h2>
         </div>
