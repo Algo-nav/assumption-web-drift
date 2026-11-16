@@ -41,6 +41,17 @@ export const metadata = {
   title: { default: `${PRODUCT_NAME} | ${SITE_NAME}`, template: `%s | ${PRODUCT_NAME}` },
   description,
   robots: { index: true, follow: true },
+  // All four files come from scripts/make-icons.mjs. app/icon.svg and app/apple-icon.png are served by file
+  // convention, but Next leaves their <link> tags out once `icons` is set here, so every one is listed: the
+  // SVG first, then the same mark as PNG for browsers that do not take an SVG icon.
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml", sizes: "any" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 // Runs before first paint, before any markup in <body>. Two jobs:
