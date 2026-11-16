@@ -34,6 +34,8 @@ If a download fails and an earlier copy exists, the earlier copy is kept. Rows a
 - Build command: `npm install && npm run build`
 - Start command: `npm run start -- -p $PORT`
 - Environment variable: `REQUESTS_DB_PATH`, a file path on a mounted volume, for example `/data/requests.sqlite3`
+- Environment variable: `NEXT_PUBLIC_GA_ID`, the GA4 measurement ID. Optional, and read at build time. Unset means no
+  analytics script, no consent banner and no Google hosts in the CSP. See `.env.example`.
 - Run a single instance. The request limits are enforced in one SQLite write transaction, which is safe across processes on one
   file, but SQLite on a network volume shared by replicas is not supported.
 - The request form keys its rate limit on the last `x-forwarded-for` entry (the hop Railway's proxy appends). If the app is ever

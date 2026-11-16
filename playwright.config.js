@@ -1,5 +1,5 @@
 import { defineConfig } from "@playwright/test";
-import { PORT, NO_DB_PORT, LIMITS_PORT, DB_PATH, LIMITS_DB_PATH, UNWRITABLE_DB_PATH } from "./tests/test-env.js";
+import { PORT, NO_DB_PORT, LIMITS_PORT, DB_PATH, LIMITS_DB_PATH, UNWRITABLE_DB_PATH, GA_ID, BROWSER_ARGS } from "./tests/test-env.js";
 
 export default defineConfig({
   testDir: "./tests",
@@ -8,6 +8,7 @@ export default defineConfig({
   reporter: [["list"]],
   use: {
     baseURL: `http://localhost:${PORT}`,
+    launchOptions: { args: BROWSER_ARGS },
   },
   webServer: [
     {
@@ -17,6 +18,8 @@ export default defineConfig({
       timeout: 240_000,
       env: {
         REQUESTS_DB_PATH: DB_PATH,
+        // Inlined into the build that all three servers share.
+        NEXT_PUBLIC_GA_ID: GA_ID,
       },
     },
     {

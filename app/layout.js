@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import "./globals.css";
+import Analytics from "./components/Analytics";
+import CookieBanner from "./components/CookieBanner";
 import InlineScript from "./components/InlineScript";
 import Reveals from "./components/Reveals";
 import SiteNav from "./components/SiteNav";
@@ -57,7 +59,7 @@ export const viewport = {
 export default async function RootLayout({ children }) {
   // Render per request so Next can stamp the CSP nonce from proxy.js on its scripts (static pages have no request).
   await connection();
-  // The one inline script below needs that same nonce; proxy.js puts the policy on the request headers.
+  // The inline scripts below need that same nonce; proxy.js puts the policy on the request headers.
   const nonce = /'nonce-([^']+)'/.exec((await headers()).get("content-security-policy") || "")?.[1];
   return (
     <html
@@ -70,12 +72,16 @@ export default async function RootLayout({ children }) {
             scripting off or blocked the page is simply visible. */}
         <InlineScript nonce={nonce} html={BOOT} />
         <a className="skip" href="#main">Skip to content</a>
+        {/* The consent default, and gtag.js only once analytics is accepted; both carry the nonce. Nothing when
+            NEXT_PUBLIC_GA_ID is unset. */}
+        <Analytics nonce={nonce} />
         <SiteNav nonce={nonce} />
         <main id="main" className="wrap page">
           {children}
         </main>
         <Footer />
         <Reveals />
+        <CookieBanner />
       </body>
     </html>
   );

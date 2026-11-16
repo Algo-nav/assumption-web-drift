@@ -350,6 +350,7 @@ test.describe("no external loads", () => {
       const tags = await page.evaluate(() =>
         [...document.querySelectorAll("script[src], link[rel=stylesheet][href]")].map((el) => el.src || el.href)
       );
+      // Holds on a build with analytics configured too: gtag.js is not requested until the visitor accepts.
       expect(tags.filter((u) => !u.startsWith(origin))).toEqual([]);
       expect(external).toEqual([]);
     });

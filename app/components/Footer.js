@@ -10,6 +10,7 @@ import {
   TERMS_URL,
   X_URL,
 } from "../lib/site";
+import CookieSettingsLink from "./CookieSettingsLink";
 import FooterMark from "./FooterMark";
 
 // The main site's footer (scndorder-site app/components/Footer.js), copied in: link columns, legal row, and
@@ -18,8 +19,8 @@ import FooterMark from "./FooterMark";
 // footer's own DOM.
 //
 // What differs from the main site: the Product links stay on this site, the Company links go to the main
-// site, the lead is this site's own sentence and its button is the request form, and there is no cookie
-// settings link because this site sets no cookies.
+// site, the lead is this site's own sentence and its button is the request form, and Privacy and Terms go to
+// the main site, where both documents live.
 
 const columns = [
   {
@@ -74,6 +75,8 @@ export default function Footer() {
         <div className="sf-legal">
           <a href={PRIVACY_URL}>Privacy</a>
           <a href={TERMS_URL}>Terms</a>
+          {/* Renders only when GA4 is on: the Privacy Policy names it as the way to change consent. */}
+          <CookieSettingsLink />
           <span className="sf-copy">{`© ${year} ${SITE_NAME}`}</span>
         </div>
         <FooterMark text={SITE_NAME.toUpperCase()} />

@@ -312,6 +312,21 @@ html[data-js]:not([data-foot-in]) .sf-mark-run i { opacity: 0; transform: transl
   .sf-copy { margin-left: 0; width: 100%; }
 }
 
+/* ---------- consent banner ---------- */
+/* The main site's banner (CookieBanner.js) on this site's tokens: navy raised, the 40% line, 12px radius.
+   Above the nav (30), below the skip link (100). */
+.consent {
+  position: fixed; right: var(--s300); bottom: var(--s200); z-index: 50; width: min(576px, calc(100vw - 2 * var(--s300)));
+  padding: var(--s300); border-radius: 12px; background: var(--navy-3); box-shadow: inset 0 0 0 1px var(--line-2);
+  color: var(--powder-2); font: 400 14px/20px var(--sans);
+}
+.consent p { margin: 0; text-wrap: pretty; }
+.consent .textlink { color: var(--powder-2); }
+.consent-actions { display: flex; gap: var(--s100); margin-top: var(--s200); }
+@media (max-width: 700px) {
+  .consent { left: var(--s200); right: var(--s200); width: auto; padding: var(--s200); }
+}
+
 /* ---------- fields and form outcomes ---------- */
 .field {
   display: block; width: 100%; min-height: 40px; padding: var(--s75) var(--s100);

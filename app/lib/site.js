@@ -13,6 +13,13 @@ export const CONTACT_URL = "https://scndorder.com/contact";
 export const PRIVACY_URL = "https://scndorder.com/privacy";
 export const TERMS_URL = "https://scndorder.com/terms";
 
+// Analytics. Empty disables GA4 entirely: no script, no banner, no cookie settings link, no Google hosts in the CSP.
+export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || "";
+
+// GA4 writes its cookies on the registrable domain, so a visitor may carry _ga cookies set on any
+// scndorder.com host. Declining clears them here as well as on this host.
+export const COOKIE_PARENT_DOMAIN = ".scndorder.com";
+
 export const REQUEST_ROLES = ["Analyst", "PM", "Director of research", "CIO", "Other"];
 
 export const REQUESTS_PER_IP_PER_HOUR = 5;

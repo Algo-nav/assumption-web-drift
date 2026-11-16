@@ -6,7 +6,14 @@ const parse = (csp) =>
   Object.fromEntries(
     csp.split(";").map((d) => d.trim()).filter(Boolean).map((d) => [d.split(" ")[0], d.split(" ").slice(1).join(" ")])
   );
-const NONCE_RE = /^'self' 'nonce-([A-Za-z0-9+/=]+)' 'strict-dynamic'$/;
+// With analytics configured (the test build is), pages add exactly these hosts and nothing wider.
+const GA = Boolean(process.env.NEXT_PUBLIC_GA_ID);
+const NONCE_RE = GA
+  ? /^'self' 'nonce-([A-Za-z0-9+/=]+)' 'strict-dynamic' https:\/\/www\.googletagmanager\.com$/
+  : /^'self' 'nonce-([A-Za-z0-9+/=]+)' 'strict-dynamic'$/;
+const CONNECT = GA
+  ? "'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://region1.analytics.google.com"
+  : undefined;
 
 for (const p of PATHS) {
   test(`security headers are present on ${p}`, async ({ request }) => {
@@ -19,6 +26,9 @@ for (const p of PATHS) {
     expect(d["style-src"]).toBe("'self' 'unsafe-inline'");
     // Scripts: self + a per-request nonce, never 'unsafe-inline'.
     expect(d["script-src"]).toMatch(NONCE_RE);
+    // connect-src is absent (default-src 'self' applies) unless analytics is on; never a wildcard.
+    expect(d["connect-src"]).toBe(CONNECT);
+    expect(h["content-security-policy"]).not.toContain("*");
     expect(h["content-security-policy"]).not.toMatch(/script-src[^;]*'unsafe-inline'/);
     expect(d["base-uri"]).toBe("'self'");
     expect(d["form-action"]).toBe("'self'");
@@ -53,6 +63,9 @@ test("the API route carries the headers too, with the same policy and no nonce",
   expect(res.status()).toBe(400);
   const d = parse(res.headers()["content-security-policy"]);
   expect(d["script-src"]).toBe("'self'");
+  // The JSON API never carries the analytics hosts.
+  expect(d["connect-src"]).toBeUndefined();
+  expect(res.headers()["content-security-policy"]).not.toContain("google");
   expect(d["default-src"]).toBe("'self'");
   expect(d["base-uri"]).toBe("'self'");
   expect(d["form-action"]).toBe("'self'");

@@ -5,7 +5,12 @@ import { buildCsp, NOSNIFF, REFERRER } from "./csp.mjs";
 // stamps it on its own scripts, which is why pages must be rendered per request (see app/layout.js).
 export function proxy(request) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const csp = buildCsp({ nonce, dev: process.env.NODE_ENV === "development" });
+  const csp = buildCsp({
+    nonce,
+    dev: process.env.NODE_ENV === "development",
+    // Google's hosts are in the policy only when analytics is configured.
+    analytics: Boolean(process.env.NEXT_PUBLIC_GA_ID),
+  });
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("Content-Security-Policy", csp);
