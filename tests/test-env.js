@@ -24,3 +24,7 @@ export const DB_PATH = path.join(process.cwd(), "data", "requests-test.sqlite3")
 // A path under a file, so the directory cannot be created and the database cannot be opened.
 export const UNWRITABLE_DB_PATH = "/dev/null/requests.sqlite3";
 export const LIMITS_DB_PATH = path.join(process.cwd(), "data", "requests-limits-test.sqlite3");
+
+// IndexNow key for the main test server only; the other two run without one. Read at request time, so one
+// build serves both cases. A dummy.
+export const INDEXNOW_KEY = "test-indexnow-key-0123456789abcdef";

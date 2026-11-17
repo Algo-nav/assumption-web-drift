@@ -1,4 +1,3 @@
-import { SITE_URL } from "./lib/site";
 import { SITEMAP_INDEX_URL } from "./lib/sitemaps";
 
 // Served at /robots.txt by Next.js App Router metadata routes. One rule for every crawler, Googlebot and
@@ -13,6 +12,5 @@ export default function robots() {
       },
     ],
     sitemap: SITEMAP_INDEX_URL,
-    host: SITE_URL,
   };
 }

@@ -45,6 +45,8 @@ test("robots.txt allows Googlebot and Bingbot everywhere but the API, and names 
     expect(allowed(robots, agent, "/api/requests"), `${agent} /api/requests`).toBe(false);
   }
   expect(robots).toMatch(new RegExp(`^Sitemap: ${SITE}/sitemap\\.xml$`, "m"));
+  // No Host directive: it is not part of the robots standard.
+  expect(robots).not.toMatch(/^\s*host\s*:/im);
 });
 
 test("/sitemap.xml is an index of the pages and rows sitemaps", async ({ request }) => {

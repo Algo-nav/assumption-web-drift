@@ -1,5 +1,5 @@
 import { defineConfig } from "@playwright/test";
-import { PORT, NO_DB_PORT, LIMITS_PORT, DB_PATH, LIMITS_DB_PATH, UNWRITABLE_DB_PATH, GA_ID, BROWSER_ARGS } from "./tests/test-env.js";
+import { PORT, NO_DB_PORT, LIMITS_PORT, DB_PATH, LIMITS_DB_PATH, UNWRITABLE_DB_PATH, GA_ID, INDEXNOW_KEY, BROWSER_ARGS } from "./tests/test-env.js";
 
 export default defineConfig({
   testDir: "./tests",
@@ -20,6 +20,7 @@ export default defineConfig({
         REQUESTS_DB_PATH: DB_PATH,
         // Inlined into the build that all three servers share.
         NEXT_PUBLIC_GA_ID: GA_ID,
+        INDEXNOW_KEY,
       },
     },
     {
@@ -31,6 +32,8 @@ export default defineConfig({
       timeout: 120_000,
       env: {
         REQUESTS_DB_PATH: UNWRITABLE_DB_PATH,
+        // Empty, so a key in the developer's shell does not leak in: this server is the "no key" case.
+        INDEXNOW_KEY: "",
       },
     },
     {
@@ -41,17 +44,24 @@ export default defineConfig({
       timeout: 120_000,
       env: {
         REQUESTS_DB_PATH: LIMITS_DB_PATH,
+        INDEXNOW_KEY: "",
       },
     },
   ],
   projects: [
     {
       name: "default",
-      testIgnore: ["**/requests-unavailable.spec.js", "**/requests-limits.spec.js"],
+      testIgnore: ["**/requests-unavailable.spec.js", "**/requests-limits.spec.js", "**/indexnow-unset.spec.js"],
     },
     {
       name: "requests-unavailable",
       testMatch: "**/requests-unavailable.spec.js",
+      use: { baseURL: `http://localhost:${NO_DB_PORT}` },
+    },
+    {
+      // The server on NO_DB_PORT has no INDEXNOW_KEY.
+      name: "indexnow-unset",
+      testMatch: "**/indexnow-unset.spec.js",
       use: { baseURL: `http://localhost:${NO_DB_PORT}` },
     },
     {
