@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 // them (scndorder-site tests/nav.spec.js and the footer tests in tests/pages.spec.js), with this site's links.
 const nav = (page) => page.getByTestId("site-nav");
 const bar = (page) => page.getByTestId("site-nav").locator("nav");
-const LINKS = ["Companies", "Misses", "Compare", "Methodology", "About", "Contact"];
+const LINKS = ["Companies", "Misses", "Compare", "Methodology", "Contact"];
 
 async function scrollTo(page, y) {
   await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), y);
@@ -87,12 +87,12 @@ test.describe("nav state", () => {
     expect(durations).toEqual(["0s", "0s"]);
   });
 
-  test("links: wordmark to scndorder.com, About and Contact to the main site, the section's link is current, the request stays here", async ({ page }) => {
+  test("links: wordmark to scndorder.com, Contact to the main site, no About, the section's link is current, the request stays here", async ({ page }) => {
     await page.goto("/");
     await expect(nav(page).locator(".nav-mark")).toHaveAttribute("href", "https://scndorder.com");
     await expect(nav(page).locator(".nav-label")).toHaveAttribute("href", "/");
     await expect(nav(page).locator(".nav-links a")).toHaveText(LINKS);
-    await expect(nav(page).getByRole("link", { name: "About" })).toHaveAttribute("href", "https://scndorder.com/about");
+    await expect(nav(page).getByRole("link", { name: "About" })).toHaveCount(0);
     await expect(nav(page).getByRole("link", { name: "Contact" })).toHaveAttribute("href", "https://scndorder.com/contact");
     await expect(nav(page).getByRole("link", { name: "Companies" })).toHaveAttribute("aria-current", "page");
     await expect(nav(page).getByRole("link", { name: "Request a company" })).toHaveAttribute("href", "/#request");
@@ -175,7 +175,7 @@ test.describe("nav at 390px", () => {
     await expect(panel.getByRole("link")).toHaveCount(LINKS.length + 1);
     // Links arrive in order, 60ms apart.
     const delays = await panel.locator("li").evaluateAll((lis) => lis.map((li) => getComputedStyle(li).transitionDelay.split(",")[0]));
-    expect(delays).toEqual(["0s", "0.06s", "0.12s", "0.18s", "0.24s", "0.3s", "0.36s"]);
+    expect(delays).toEqual(["0s", "0.06s", "0.12s", "0.18s", "0.24s", "0.3s"]);
 
     await page.keyboard.press("Escape");
     await expect(button).toHaveAttribute("aria-expanded", "false");

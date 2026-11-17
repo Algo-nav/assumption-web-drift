@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, MotionConfig } from "motion/react";
 import InlineScript from "./InlineScript";
-import { ABOUT_URL, CONTACT_URL, MAIN_URL, PRODUCT_NAME } from "../lib/site";
+import { CONTACT_URL, MAIN_URL, PRODUCT_NAME } from "../lib/site";
 
 // The main site's nav (scndorder-site app/components/SiteNav.js), copied in. Full width at the top of the
 // page; after 80px of scroll it eases into a centred pill sized to its content. The move is a layout
@@ -16,7 +16,7 @@ import { ABOUT_URL, CONTACT_URL, MAIN_URL, PRODUCT_NAME } from "../lib/site";
 // - the links are this site's, and the route comes from usePathname because the nav sits in the layout;
 // - the wordmark goes to scndorder.com, and the product label beside it goes home (dropped from the pill);
 // - the button is "Request a company" and steps aside while the request form (#request) is on screen;
-// - the links collapse into the panel at 1080px, not 820px: six links and the label need the room.
+// - the links collapse into the panel at 1080px, not 820px: five links and the label need the room.
 const EASE = [0.22, 1, 0.36, 1];
 const PILL = { borderRadius: 12 };
 const NAV_COLLAPSE = 1080;
@@ -42,7 +42,6 @@ const LINKS = [
   { href: "/misses", label: "Misses", match: (p) => p.startsWith("/misses") },
   { href: "/compare", label: "Compare", match: (p) => p.startsWith("/compare") },
   { href: "/methodology", label: "Methodology", match: (p) => p.startsWith("/methodology") },
-  { href: ABOUT_URL, label: "About" },
   { href: CONTACT_URL, label: "Contact" },
 ];
 const REQUEST = "/#request";

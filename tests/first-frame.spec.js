@@ -69,7 +69,7 @@ test.describe("nav on first load", () => {
     // Mid-way through the 600ms move the bar is between its two widths.
     await page.waitForTimeout(120);
     const mid = (await nav.locator(".nav-bg").boundingBox()).width;
-    expect(mid).toBeGreaterThan(900);
+    expect(mid).toBeGreaterThan(880);
     expect(mid).toBeLessThan(1199);
   });
 

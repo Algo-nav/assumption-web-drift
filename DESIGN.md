@@ -232,7 +232,7 @@ A 1200px container with 24px gutters (16px below 700px). Sections are separated 
 
 Spacing takes only the table values: 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96.
 
-The navigation is full width at the top of the page and becomes a centred pill, sized to its content, after 80px of scroll. Below 1080px the links collapse into a full-height panel (the main site collapses at 820px; this bar carries six links and the product label).
+The navigation is full width at the top of the page and becomes a centred pill, sized to its content, after 80px of scroll. Below 1080px the links collapse into a full-height panel (the main site collapses at 820px; this bar carries five links and the product label).
 
 The company page is a rail and a column: filters in a 216px rail on the left, charts and the table on the right. The rail collapses to a 44px strip; below 1000px it sits above the column.
 
@@ -278,7 +278,7 @@ A square in the data colour and the status name. No pill, no fill behind the wor
 As on the main site: 8px radius, 40px tall, navy fill with a one-pixel line; the line brightens on focus alongside the focus ring. The home search is the one large field: 64px tall, 12px radius, lead type. "/" focuses it, matches are listed under it, and Enter opens the first. Outcomes are written as record entries: a mono status line (green "recorded", brick "not recorded") above a plain sentence.
 
 ### Navigation
-The main site's component, copied. Wordmark left (to scndorder.com) with the product label beside it (home; dropped from the pill), six links and the primary button right. The current section's link carries `aria-current` and a filled background. The menu button's three lines fold into a cross. Menu links arrive 60ms apart, rising 24px.
+The main site's component, copied. Wordmark left (to scndorder.com) with the product label beside it (home; dropped from the pill), five links (Companies, Misses, Compare, Methodology, Contact) and the primary button right. About is not in the nav or the panel; it is in the footer's Company column, to scndorder.com/about. The current section's link carries `aria-current` and a filled background. The menu button's three lines fold into a cross. Menu links arrive 60ms apart, rising 24px.
 
 ### Footer
 The main site's component, copied: link columns, the legal row, and the wordmark fitted to the container on one line as the last thing on the page. Each letter rises once when the mark comes into view; the letter under the pointer goes scarlet.
@@ -316,7 +316,7 @@ The main site wins wherever it and the prototype disagree. These are the places 
 
 - **Green** is #5FA57F, not #1B7F4B: the main site's green sits on paper and does not reach 3:1 on navy.
 - **Brick lift** (#FF9F94) and **amber** (#C27A12) are added, as data colours. Brick itself is unchanged.
-- **Nav:** this site's links; the wordmark goes to scndorder.com and the product label beside it goes home; the route comes from `usePathname` because the nav sits in the layout; the button steps aside for `#request` instead of `#access`; the links collapse at 1080px instead of 820px. The panel's links are 12px apart instead of 16px so seven of them fit a short screen.
+- **Nav:** this site's links; the wordmark goes to scndorder.com and the product label beside it goes home; the route comes from `usePathname` because the nav sits in the layout; the button steps aside for `#request` instead of `#access`; the links collapse at 1080px instead of 820px. The panel's links are 12px apart instead of 16px so six of them fit a short screen.
 - **Footer:** this site's lead sentence and links; the lead button is the ghost "Request a company"; the "Cookie settings" link is the main site's and, as there, renders only when GA4 is configured.
 - **Consent banner:** the main site's component and copy on this site's classes (`.consent`, `.btn.sm`): navy raised, the 40% line, 12px radius, solid powder "Accept analytics" and ghost "Decline". Its Privacy Policy link goes to scndorder.com/privacy. The analytics scripts carry the page's CSP nonce, and gtag.js is not requested from Google until the visitor accepts (the main site loads it on every visit under a denied consent default).
 - **Field edge** is powder dim, not the 40% line: the 40% line reaches 2.8:1 against navy and navy raised, under the 3:1 a control's edge needs.
