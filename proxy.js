@@ -10,6 +10,8 @@ export function proxy(request) {
     dev: process.env.NODE_ENV === "development",
     // Google's hosts are in the policy only when analytics is configured.
     analytics: Boolean(process.env.NEXT_PUBLIC_GA_ID),
+    // Likewise Microsoft Clarity's.
+    clarity: Boolean(process.env.NEXT_PUBLIC_CLARITY_ID),
   });
 
   const requestHeaders = new Headers(request.headers);

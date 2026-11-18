@@ -154,7 +154,12 @@ test("banner shows, accept persists, reload hides, cookie settings reopens, decl
 
   await page.goto("/");
   await expect(banner(page)).toBeVisible();
-  await expect(banner(page)).toContainText("It only runs if you accept.");
+  // Names what this build loads; the test build has both ids.
+  await expect(banner(page)).toContainText(
+    process.env.NEXT_PUBLIC_CLARITY_ID
+      ? "We use Google Analytics and Microsoft Clarity to see how visitors use this site. They only run if you accept. Essential cookies remember your choice."
+      : "We use Google Analytics to see how visitors find this site. It only runs if you accept. Essential cookies remember your choice."
+  );
   // The policy lives on the main site.
   await expect(banner(page).getByRole("link", { name: "Privacy Policy" })).toHaveAttribute("href", "https://scndorder.com/privacy");
 

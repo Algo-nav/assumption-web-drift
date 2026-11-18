@@ -1,10 +1,10 @@
 "use client";
 
-import { GA_MEASUREMENT_ID } from "../lib/site";
+import { ANALYTICS_ENABLED } from "../lib/site";
 
-// Footer link that reopens the consent banner. Renders nothing when GA is off.
+// Footer link that reopens the consent banner. Renders nothing when neither GA nor Clarity is configured.
 export default function CookieSettingsLink({ style }) {
-  if (!GA_MEASUREMENT_ID) return null;
+  if (!ANALYTICS_ENABLED) return null;
   return (
     <button
       type="button"

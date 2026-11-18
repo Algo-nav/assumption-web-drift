@@ -4,6 +4,8 @@ import path from "node:path";
 // Google hosts are all under test. NEXT_PUBLIC_* is inlined at build time; the web servers and the test workers
 // both read it from here. The id is a dummy.
 export const GA_ID = (process.env.NEXT_PUBLIC_GA_ID ||= "G-TEST0000000");
+// Likewise Microsoft Clarity, also a dummy.
+export const CLARITY_ID = (process.env.NEXT_PUBLIC_CLARITY_ID ||= "testclarity");
 // REAL_GTAG=1 runs the consent spec once against Google's real loader:
 //   REAL_GTAG=1 npx playwright test tests/consent.spec.js
 export const REAL_GTAG = process.env.REAL_GTAG === "1";
@@ -12,9 +14,11 @@ export const REAL_GTAG = process.env.REAL_GTAG === "1";
 // domain can be tested for real.
 export const PILOT_HOST = "pilot.scndorder.com";
 const GOOGLE_HOSTS = ["www.googletagmanager.com", "www.google-analytics.com", "analytics.google.com", "region1.google-analytics.com", "region1.analytics.google.com"];
+// Nor Microsoft, ever: the Clarity tag is answered by the clarity spec, and its collection hosts resolve nowhere.
+const CLARITY_HOSTS = ["clarity.ms", "*.clarity.ms", "c.bing.com"];
 export const BROWSER_ARGS = [
   "--host-resolver-rules=" +
-    [`MAP ${PILOT_HOST} 127.0.0.1`, ...(REAL_GTAG ? [] : GOOGLE_HOSTS.map((h) => `MAP ${h} ~NOTFOUND`))].join(", "),
+    [`MAP ${PILOT_HOST} 127.0.0.1`, ...[...(REAL_GTAG ? [] : GOOGLE_HOSTS), ...CLARITY_HOSTS].map((h) => `MAP ${h} ~NOTFOUND`)].join(", "),
 ];
 
 export const PORT = 3100;

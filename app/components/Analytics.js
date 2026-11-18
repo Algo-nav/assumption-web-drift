@@ -1,6 +1,7 @@
+import ClarityLoader from "./ClarityLoader";
 import GtagLoader from "./GtagLoader";
 import InlineScript from "./InlineScript";
-import { GA_MEASUREMENT_ID } from "../lib/site";
+import { CLARITY_ID, GA_MEASUREMENT_ID } from "../lib/site";
 
 // GA4 with Google Consent Mode v2, ported from the main site (scndorder-site app/components/Analytics.js).
 // The inline script declares the consent default (everything denied but security_storage), restores a saved
@@ -13,7 +14,10 @@ import { GA_MEASUREMENT_ID } from "../lib/site";
 //   InlineScript, parsed before anything else on the page; the main site uses next/script's
 //   beforeInteractive for the same job.
 //
-// Renders nothing when GA_MEASUREMENT_ID is empty.
+// Microsoft Clarity sits behind the same choice (ClarityLoader, ported from the main site), after gtag.js in
+// the tree so it is never requested first. It needs no inline script.
+//
+// Each part renders nothing when its id is empty.
 
 // JSON.stringify so the id can never close the string it sits in.
 const BOOT = (id) => `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;
@@ -23,11 +27,15 @@ gtag('js',new Date());
 gtag('config',${JSON.stringify(id)},{anonymize_ip:true,allow_google_signals:false,allow_ad_personalization_signals:false});`;
 
 export default function Analytics({ nonce }) {
-  if (!GA_MEASUREMENT_ID) return null;
   return (
     <>
-      <InlineScript id="consent-default" nonce={nonce} html={BOOT(GA_MEASUREMENT_ID)} />
-      <GtagLoader nonce={nonce} />
+      {GA_MEASUREMENT_ID ? (
+        <>
+          <InlineScript id="consent-default" nonce={nonce} html={BOOT(GA_MEASUREMENT_ID)} />
+          <GtagLoader nonce={nonce} />
+        </>
+      ) : null}
+      {CLARITY_ID ? <ClarityLoader nonce={nonce} /> : null}
     </>
   );
 }

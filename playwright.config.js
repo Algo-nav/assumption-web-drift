@@ -1,5 +1,5 @@
 import { defineConfig } from "@playwright/test";
-import { PORT, NO_DB_PORT, LIMITS_PORT, DB_PATH, LIMITS_DB_PATH, UNWRITABLE_DB_PATH, GA_ID, INDEXNOW_KEY, BROWSER_ARGS } from "./tests/test-env.js";
+import { PORT, NO_DB_PORT, LIMITS_PORT, DB_PATH, LIMITS_DB_PATH, UNWRITABLE_DB_PATH, GA_ID, CLARITY_ID, INDEXNOW_KEY, BROWSER_ARGS } from "./tests/test-env.js";
 
 export default defineConfig({
   testDir: "./tests",
@@ -20,6 +20,7 @@ export default defineConfig({
         REQUESTS_DB_PATH: DB_PATH,
         // Inlined into the build that all three servers share.
         NEXT_PUBLIC_GA_ID: GA_ID,
+        NEXT_PUBLIC_CLARITY_ID: CLARITY_ID,
         INDEXNOW_KEY,
       },
     },

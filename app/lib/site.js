@@ -15,6 +15,10 @@ export const TERMS_URL = "https://scndorder.com/terms";
 
 // Analytics. Empty disables GA4 entirely: no script, no banner, no cookie settings link, no Google hosts in the CSP.
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || "";
+// Microsoft Clarity project id. Empty disables Clarity entirely: no tag, no Clarity hosts in the CSP, no mention in the banner.
+export const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || "";
+// Either tool on: the banner and the footer's Cookie settings link are shown.
+export const ANALYTICS_ENABLED = Boolean(GA_MEASUREMENT_ID || CLARITY_ID);
 
 // GA4 writes its cookies on the registrable domain, so a visitor may carry _ga cookies set on any
 // scndorder.com host. Declining clears them here as well as on this host.

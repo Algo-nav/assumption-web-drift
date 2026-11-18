@@ -83,8 +83,8 @@ export default async function RootLayout({ children }) {
             scripting off or blocked the page is simply visible. */}
         <InlineScript nonce={nonce} html={BOOT} />
         <a className="skip" href="#main">Skip to content</a>
-        {/* The consent default, and gtag.js only once analytics is accepted; both carry the nonce. Nothing when
-            NEXT_PUBLIC_GA_ID is unset. */}
+        {/* The consent default, and gtag.js and the Clarity tag only once analytics is accepted; all carry the
+            nonce. Each is absent when its id (NEXT_PUBLIC_GA_ID, NEXT_PUBLIC_CLARITY_ID) is unset. */}
         <Analytics nonce={nonce} />
         <SiteNav nonce={nonce} />
         <main id="main" className="wrap page">

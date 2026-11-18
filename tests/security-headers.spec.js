@@ -8,12 +8,21 @@ const parse = (csp) =>
   );
 // With analytics configured (the test build is), pages add exactly these hosts and nothing wider.
 const GA = Boolean(process.env.NEXT_PUBLIC_GA_ID);
-const NONCE_RE = GA
-  ? /^'self' 'nonce-([A-Za-z0-9+/=]+)' 'strict-dynamic' https:\/\/www\.googletagmanager\.com$/
-  : /^'self' 'nonce-([A-Za-z0-9+/=]+)' 'strict-dynamic'$/;
-const CONNECT = GA
-  ? "'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://region1.analytics.google.com"
-  : undefined;
+// Likewise Microsoft Clarity: its tag host, its collection subdomains (the policy's one wildcard) and c.bing.com.
+const CLARITY = Boolean(process.env.NEXT_PUBLIC_CLARITY_ID);
+const SCRIPT_HOSTS = [GA && "https://www.googletagmanager.com", CLARITY && "https://www.clarity.ms"].filter(Boolean);
+const NONCE_RE = new RegExp(
+  `^'self' 'nonce-([A-Za-z0-9+/=]+)' 'strict-dynamic'${SCRIPT_HOSTS.map((h) => ` ${h.replace(/[./]/g, "\\$&")}`).join("")}$`
+);
+const CONNECT_HOSTS = [
+  ...(GA
+    ? ["https://www.google-analytics.com", "https://analytics.google.com", "https://region1.google-analytics.com", "https://region1.analytics.google.com"]
+    : []),
+  ...(CLARITY ? ["https://*.clarity.ms", "https://c.bing.com"] : []),
+];
+// Clarity's image pixels: two exact hosts in img-src, and only when Clarity is configured.
+const IMG = ["'self'", "data:", ...(CLARITY ? ["https://c.clarity.ms", "https://c.bing.com"] : [])].join(" ");
+const CONNECT = CONNECT_HOSTS.length ? ["'self'", ...CONNECT_HOSTS].join(" ") : undefined;
 
 for (const p of PATHS) {
   test(`security headers are present on ${p}`, async ({ request }) => {
@@ -22,13 +31,14 @@ for (const p of PATHS) {
     expect(h["content-security-policy"], "Content-Security-Policy").toBeTruthy();
     const d = parse(h["content-security-policy"]);
     expect(d["default-src"]).toBe("'self'");
-    expect(d["img-src"]).toBe("'self' data:");
+    expect(d["img-src"]).toBe(IMG);
     expect(d["style-src"]).toBe("'self' 'unsafe-inline'");
     // Scripts: self + a per-request nonce, never 'unsafe-inline'.
     expect(d["script-src"]).toMatch(NONCE_RE);
-    // connect-src is absent (default-src 'self' applies) unless analytics is on; never a wildcard.
+    // connect-src is absent (default-src 'self' applies) unless analytics is on.
     expect(d["connect-src"]).toBe(CONNECT);
-    expect(h["content-security-policy"]).not.toContain("*");
+    // The only wildcard ever present is Clarity's subdomain one, in connect-src.
+    expect(h["content-security-policy"].replace("https://*.clarity.ms", "")).not.toContain("*");
     expect(h["content-security-policy"]).not.toMatch(/script-src[^;]*'unsafe-inline'/);
     expect(d["base-uri"]).toBe("'self'");
     expect(d["form-action"]).toBe("'self'");
@@ -63,9 +73,11 @@ test("the API route carries the headers too, with the same policy and no nonce",
   expect(res.status()).toBe(400);
   const d = parse(res.headers()["content-security-policy"]);
   expect(d["script-src"]).toBe("'self'");
-  // The JSON API never carries the analytics hosts.
+  // The JSON API never carries the analytics hosts, in img-src or anywhere else.
+  expect(d["img-src"]).toBe("'self' data:");
   expect(d["connect-src"]).toBeUndefined();
   expect(res.headers()["content-security-policy"]).not.toContain("google");
+  expect(res.headers()["content-security-policy"]).not.toMatch(/clarity|bing/);
   expect(d["default-src"]).toBe("'self'");
   expect(d["base-uri"]).toBe("'self'");
   expect(d["form-action"]).toBe("'self'");
